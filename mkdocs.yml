@@ -1,3 +1,20 @@
 site_name: 二进制新手入门
+site_url: https://huoji120.github.io/
+repo_url: https://github.com/huoji120/huoji120.github.io
+repo_name: huoji120/huoji120.github.io
+
 theme:
   name: material
+  language: zh
+  features:
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+
+nav:
+  - CrackMe:
+      - crackme/index.md
+      - C++无壳 新手第一個 KeyGenMe/Crackme: crackme/cpp-no-pack-keygenme-crackme.md
