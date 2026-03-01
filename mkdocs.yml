@@ -6,6 +6,10 @@ repo_name: huoji120/huoji120.github.io
 theme:
   name: material
   language: zh
+  palette:
+    scheme: slate
+    primary: black
+    accent: indigo
   features:
     - navigation.top
     - search.highlight
@@ -16,5 +20,4 @@ plugins:
 
 nav:
   - CrackMe:
-      - crackme/index.md
       - C++无壳 新手第一個 KeyGenMe/Crackme: crackme/cpp-no-pack-keygenme-crackme.md
