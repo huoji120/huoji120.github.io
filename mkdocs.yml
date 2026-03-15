@@ -21,3 +21,5 @@ plugins:
 nav:
   - CrackMe:
       - C++无壳 新手第一個 KeyGenMe/Crackme: crackme/cpp-no-pack-keygenme-crackme.md
+  - 恶意软件分析:
+      - 0基础分析阶段执行银狐木马(带混淆): crackme/cpp-no-pack-keygenme-crackme.md
