@@ -11,45 +11,70 @@
 ---
 
 - **了解一下恶意代码流程：**
+  <br>
   双击 exe
   <br>
   ↓
   <br>
   CreateProcess
-
+  <br>
   ↓
-
+  <br>
   内核创建 EPROCESS
-
+  <br>
   ↓
-
+  <br>
   初始化进程
-
+  <br>
   ↓
+  <br>
   创建 PEB
+  <br>
   ↓
+  <br>
   加载 DLL
+  <br>
   ↓
+  <br>
   创建线程（TEB）
+  <br>
   ↓
+  <br>
   **线程开始执行**
+  <br>
   ↓
+  <br>
   （需要系统功能）
+  <br>
   ↓
+  <br>
   访问 TEB（获取 PEB 地址）
+  <br>
   ↓
   访问 PEB（拿模块信息）
+  <br>
   ↓
+  <br>
   找到 DLL（kernel32.dll）
+  <br>
   ↓
+  <br>
   解析导出表（手动解析GetProcAddress，再用它找其他 API如 VirtualAlloc）
+  <br>
   ↓
+  <br>
   找到 API
+  <br>
   ↓
+  <br>
   调用 API
+  <br>
   ↓
+  <br>
   如果涉及安全操作则系统检查 Token
+  <br>
   ↓
+  <br>
   执行成功 / 失败
 
 根据以上，我们来解决重定向这个问题，思路就是：
