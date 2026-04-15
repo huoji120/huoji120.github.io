@@ -12,12 +12,19 @@
 
 - **了解一下恶意代码流程：**
   双击 exe
+  <br>
   ↓
+  <br>
   CreateProcess
+
   ↓
+
   内核创建 EPROCESS
+
   ↓
+
   初始化进程
+
   ↓
   创建 PEB
   ↓
@@ -826,7 +833,7 @@ WinHttpCrackUrl()
 ↓
 把结果写进 URL_COMPONENTSW
 ↓
-URL_COMPONENTSW 指向 /_URL_INFO
+URL_COMPONENTSW 指向 /\_URL_INFO
 
 ### 加载 WinHTTP
 
